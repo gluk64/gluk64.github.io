@@ -20,7 +20,10 @@
         <h1>Experta Demo</h1>
         <!-- <button class="mui-btn mui-btn--raised mui-btn--accent">Ask a question</button> -->
         <h2>Questions asked:</h2>
-        <ul class="mui-list--unstyled">
+        <img src="loading.gif" v-if="questionsLoading">
+        <p v-else-if="questions.length === 0">Grrr, sometimes Metamask's web3 renders an empty event list without
+          any exception, I don't know why :/ Just reload the page a few times.</p>
+        <ul class="mui-list--unstyled" v-else>
           <li v-for="question in questions">
             <div class="mui-panel">
               <!-- <p>Raw: {{question}}</p> -->
@@ -53,6 +56,12 @@
         return
       }
 
+      window.web3 = new Web3(web3.currentProvider);
+      if (web3.currentProvider.isMetaMask !== true) {
+        app.metamaskReady = false;
+        return
+      }
+
       web3.version.getNetwork((err, netId) => {
         switch (netId) {
           case "3":
@@ -70,15 +79,34 @@
       app.forum = app.ForumContract.at("0x4b76a1c302364C8642591Ca194b0241a435Fe125");
 
       var eventQuestionAsked = app.forum.QuestionAsked({}, { fromBlock: 1867962, toBlock: 'latest' });
-      eventQuestionAsked.get((error, eventResult) => {
-        if (error)
-          console.log('Error in event handler: ' + error);
-        else
-          console.log(eventResult);
-          eventResult.forEach(r => {
-            app.questions.push(r)
-          })
-      });
+
+      var fetchAllQuestions = (retries) => {
+
+        eventQuestionAsked.get((error, eventResult) => {
+          if (error) {
+            console.log('Error in event handler: ' + error);
+            app.questionsLoading = false;
+          }
+          else if (eventResult.length === 0) {
+            console.log('Fetching failed')
+            if (retries > 0) {
+              console.log('Retrying in 1 second')
+              window.setTimeout(() => fetchAllQuestions(retries-1), 1000);
+            } else {
+              app.questionsLoading = false;
+            }
+          }
+          else {
+            console.log(eventResult);
+            eventResult.forEach(r => {
+              app.questions.push(r)
+            })
+            app.questionsLoading = false;
+          }
+        });
+      }
+
+      fetchAllQuestions(2)
 
     })
 
