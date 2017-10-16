@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Experta Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.muicss.com/mui-0.9.27/css/mui.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.muicss.com/mui-0.9.27/js/mui.min.js"></script>
+  <script src="https://unpkg.com/vue"></script>
+  <style>body {background-color: #EEE;}</style>
+</head>
+
+<body>
+  <div  id="app" class="mui-container">
+      <div class="mui-panel" v-if="metamaskReady === false">
+        <h1>Experta Demo</h1>
+        <p>This demo requires <a href="https://metamask.io/">MetaMask plugin</a> connected to Ropsten testnet</p>
+      </div>
+      <div class="mui-panel" v-if="metamaskReady === true">
+        <h1>Experta Demo</h1>
+        <!-- <button class="mui-btn mui-btn--raised mui-btn--accent">Ask a question</button> -->
+        <h2>Questions asked:</h2>
+        <ul class="mui-list--unstyled">
+          <li v-for="question in questions">
+            <div class="mui-panel">
+              <!-- <p>Raw: {{question}}</p> -->
+              <p>Asked in block: {{question.blockNumber}}</p>
+              <p>Transaction: <a v-bind:href="'https://ropsten.etherscan.io/tx/'+question.transactionHash">{{question.transactionHash}}</a></p>
+              <p>Asker: <a v-bind:href="'https://ropsten.etherscan.io/address/'+question.args.asker">{{question.args.asker}}</a></p>
+              <p>Wei deposited: {{question.args.amount}}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+  </div>
+
+  <script>
+
+    var app = new Vue({
+      el: '#app',
+      data: {
+        metamaskReady: null,
+        questionsLoading: true,
+        questions: []
+      },
+      methods: {
+      }
+    })
+
+    window.addEventListener('load', function() {
+      if (typeof web3 === 'undefined') {
+        app.metamaskReady = false;
+        return
+      }
+
+      web3.version.getNetwork((err, netId) => {
+        switch (netId) {
+          case "3":
+            app.metamaskReady = true;
+            break
+          default:
+            app.metamaskReady = false;
+            return
+        }
+      })
+
+      var abi = [{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"withdrawForumFees","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"questionHash","type":"bytes32"},{"name":"amount","type":"uint256"}],"name":"offerBid","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"questionHash","type":"bytes32"},{"name":"_validBeforeBlock","type":"uint256"}],"name":"askQuestion","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"amount","type":"uint256"}],"name":"getForumFee","outputs":[{"name":"feeAmount","type":"uint256"}],"payable":false,"stateMutability":"pure","type":"function"},{"inputs":[{"name":"_team","type":"address[]"},{"name":"_forumFeesBeneficiary","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"questionHash","type":"bytes32"},{"indexed":true,"name":"asker","type":"address"},{"indexed":false,"name":"validBeforeBlock","type":"uint256"},{"indexed":false,"name":"amount","type":"uint256"}],"name":"QuestionAsked","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"questionHash","type":"bytes32"},{"indexed":false,"name":"expert","type":"address"},{"indexed":false,"name":"amount","type":"uint256"}],"name":"BidOffered","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"questionHash","type":"bytes32"},{"indexed":true,"name":"expert","type":"address"},{"indexed":false,"name":"amount","type":"uint256"}],"name":"BidAccepted","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"questionHash","type":"bytes32"},{"indexed":true,"name":"expert","type":"address"},{"indexed":false,"name":"answerHash","type":"bytes32"}],"name":"QuestionAnswered","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"questionHash","type":"bytes32"}],"name":"QuestionClosed","type":"event"}];
+
+      app.ForumContract = web3.eth.contract(abi);
+      app.forum = app.ForumContract.at("0x4b76a1c302364C8642591Ca194b0241a435Fe125");
+
+      var eventQuestionAsked = app.forum.QuestionAsked({}, { fromBlock: 1867962, toBlock: 'latest' });
+      eventQuestionAsked.get((error, eventResult) => {
+        if (error)
+          console.log('Error in event handler: ' + error);
+        else
+          console.log(eventResult);
+          eventResult.forEach(r => {
+            app.questions.push(r)
+          })
+      });
+
+    })
+
+  </script>
+</body>
