@@ -23,13 +23,12 @@
             <el-main>                          
                 <el-row :gutter="10">
                     <el-col :xs="0" :sm="1" :md="2" :lg="4"><div class="empty"></div></el-col>
-                    <el-col :xs="24" :sm="22" :md="20" :lg="16">
+                    <el-col :xs="24" :sm="20" :md="18" :lg="16">
                         <div class="box">
                             <h1>Welcome to Plasma Demo</h1>
                             <el-form ref="form" label-width="6em">
-                                <el-form-item label="Username:">
-                                    <el-input v-model="username" placeholder="Pick any username, we won't ask for password" ></el-input>
-                                </el-form-item>
+                                <p>Username:</p>
+                                <el-input v-model="username" placeholder="Choose any login" ></el-input>
                             </el-form>
                             <div v-if="username">
                                 <el-row :gutter="10">
