@@ -92,7 +92,6 @@
         html {
             font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
             background: #f8f8f8;
-            color: #ED2939;
         }
         .empty {
             padding: 2em;
@@ -289,20 +288,22 @@
                         toBlock: "latest",
                         topics: [TopicBlockCommitted]
                     })
+                    let acc = []
                     for(var i in logs) {
                         //let event = ethAbi.decodeEvent(EventBlockCommitted, logs[i].data)
                         let block = parseInt(logs[i].topics[1].substr(2), 16)
                         //console.log('committed block #', block)
                         let tx = await eth.getTransactionByHash(logs[i].transactionHash)
                         let txInput = abiDecoder.decodeMethod(tx.input)
-                        this.lastBlock = tx.blockNumber.toNumber() + 1
+                        //this.lastBlock = tx.blockNumber.toNumber() + 1
                         let txs = decodeTxBatch(txInput.params[2].value.substr(2))
                         for(var j in txs) {
                             let tx = txs[j]
                             tx.block = block
-                            this.transactions.push(tx)
+                            acc.push(tx)
                         }
                     }
+                    this.transactions = acc
                 },
 
                 async transfer() {
