@@ -34,8 +34,7 @@
                                     <div v-if="username">
                                         <br>
                                         <p>Account ID: <strong>{{account}}</strong></p>
-                                        <p>Balance committed: <strong>{{balanceCommitted}}</strong></p>
-                                        <p>Balance verified: <strong>{{balanceVerified}}</strong></p>
+                                        <p>Verified balance: <strong>{{balanceVerified}}</strong></p>
                                         <br>
                                         <p><el-button @click="transfer">Make transfer</el-button></p>
                                         <br>
@@ -116,7 +115,12 @@
             <el-table-column prop="to" label="To"></el-table-column>
             <el-table-column prop="amount" label="Amount"></el-table-column>
             <el-table-column prop="block" label="Block #"></el-table-column>
-            <el-table-column prop="status" label="Status" width="100"></el-table-column>
+            <el-table-column prop="verified" label="Status" width="100">
+                <template slot-scope="scope">
+                    <i class="el-icon-success" v-if="scope.row.verified" style="color: green"></i>
+                    <span>{{scope.row.verified ? "verified" : "committed"}}</span>
+                </template>
+            </el-table-column>
         </el-table>
     </script>
 
@@ -217,8 +221,8 @@
                 transactionsExt() {
                     return this.transactions.map(_tx => {
                         let tx = JSON.parse(JSON.stringify(_tx))
-                        tx.status = this.totalVerified >= tx.block ?
-                            "✔ verified" : "committed"
+                        tx.verified = this.totalVerified >= tx.block
+                         //? "&#x2714; verified" : "committed"
                         return tx
                     }).reverse()
                 },
