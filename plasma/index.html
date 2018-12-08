@@ -25,37 +25,40 @@
                     <el-col :xs="0" :sm="1" :md="2" :lg="4"><div class="empty"></div></el-col>
                     <el-col :xs="24" :sm="20" :md="18" :lg="16">
                         <div class="box">
-                            <h1>Welcome to Plasma Demo</h1>
-                            <el-form ref="form" label-width="6em">
-                                <p>Username:</p>
-                                <el-input v-model="username" placeholder="Choose any login" ></el-input>
-                            </el-form>
-                            <div v-if="username">
-                                <el-row :gutter="10">
-                                    <el-col :xs="24" :sm="12" class="side">
-                                        <h3>Chain state</h3>
-                                        <p>Total blocks committed: {{totalCommitted}}</p>
-                                        <p>Total blocks verified: {{totalVerified}}</p>
-                                    </el-col>
-                                    <el-col :xs="24" :sm="12" class="side" v-loading="loading">
-                                        <h3>Account</h3>
-                                        <p>Account ID: {{account}}</p>
-                                        <p>Balance committed: {{balanceCommitted}}</p>
-                                        <p>Balance verified: {{balanceVerified}}</p>
+                            <h1>Snarks are coming!</h1>
+                            <el-tabs>
+                                <el-tab-pane label="Wallet">
+
+                                    <el-form ref="form" label-width="6em">
+                                        <p>Username:</p>
+                                        <el-input v-model="username" placeholder="Choose any login" ></el-input>
+                                    </el-form>
+                                    <div v-if="username">
+                                        <br>
+                                        <p>Account ID: <strong>{{account}}</strong></p>
+                                        <p>Balance committed: <strong>{{balanceCommitted}}</strong></p>
+                                        <p>Balance verified: <strong>{{balanceVerified}}</strong></p>
                                         <br>
                                         <p><el-button @click="transfer">Make transfer</el-button></p>
-                                    </el-col>
-                                </el-row>
-                                <div v-if="transactions.length">
-                                    <h3>All transactions</h3>
-                                    <el-table :data="transactions" style="width: 100%" class="merkle">
-                                        <el-table-column prop="from" label="From"></el-table-column>
-                                        <el-table-column prop="to" label="To"></el-table-column>
-                                        <el-table-column prop="amount" label="Amount"></el-table-column>
-                                        <el-table-column prop="block" label="block"></el-table-column>
-                                    </el-table>
-                                </div>
-                            </div>
+                                        <br>
+                                        <div v-if="userTransactions.length">
+                                            <h4>Latest transactions</h4>
+                                            <tx-list :transactions=userTransactions></tx-list>
+                                        </div>
+                                    </div>
+
+                                </el-tab-pane>
+                                <el-tab-pane label="Block explorer">
+
+                                    <p>Blocks committed: {{totalCommitted}}</p>
+                                    <p>Blocks verified: {{totalVerified}}</p>
+                                    <div v-if="transactions.length">
+                                        <h4>All transactions</h4>
+                                        <tx-list :transactions=transactionsExt></tx-list>
+                                    </div>
+
+                                </el-tab-pane>
+                            </el-tabs>
                         </div>
                     </el-col>
                     <el-col :xs="0" :sm="1" :md="2" :lg="4"><div class="empty"></div></el-col>
@@ -110,6 +113,27 @@
             font-size: 0.9em;
         }
     </style>
+
+    <script type="x/template" id="tx-list">
+        <el-table :data="transactions" style="width: 100%" class="merkle">
+            <el-table-column prop="from" label="From"></el-table-column>
+            <el-table-column prop="to" label="To"></el-table-column>
+            <el-table-column prop="amount" label="Amount"></el-table-column>
+            <el-table-column prop="block" label="Block #"></el-table-column>
+            <el-table-column prop="status" label="Status"></el-table-column>
+        </el-table>
+    </script>
+
+    <script>
+        Vue.component('tx-list', {
+            template: document.currentScript.ownerDocument.getElementById('tx-list'),
+            props: ['transactions'],
+            data: () => ({
+            }),
+            methods: {
+            }
+        })
+    </script>
 
     <script>
         const eth = new Eth(new Eth.HttpProvider('https://rinkeby.infura.io'))
@@ -170,7 +194,7 @@
                 totalCommitted: 0,
                 totalVerified: 0,
                 
-                username: "",
+                username: "alex",
                 nonce: 0,
                 loading: false,
                 
@@ -194,6 +218,17 @@
                 balanceVerified() {
                     return this.sum(this.totalVerified)
                 },
+                transactionsExt() {
+                    return this.transactions.map(_tx => {
+                        let tx = JSON.parse(JSON.stringify(_tx))
+                        tx.status = this.totalVerified >= tx.block ?
+                            "✔ verified" : "committed"
+                        return tx
+                    }).reverse()
+                },
+                userTransactions() {
+                    return this.transactionsExt.filter(tx => tx.from == this.account || tx.to == this.account)
+                }
             },
             watch: {
                 account() {
@@ -221,7 +256,7 @@
                             type: 'info'
                         }) 
                     }
-                }
+                },
             },
             methods: {
 
@@ -261,7 +296,6 @@
                         let txs = decodeTxBatch(txInput.params[2].value.substr(2))
                         for(var j in txs) {
                             let tx = txs[j]
-                            tx.verified = "no"
                             tx.block = block
                             this.transactions.push(tx)
                         }
