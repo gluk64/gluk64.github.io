@@ -19,8 +19,6 @@
 </head>
 <body>
     <div id="app">
-        <el-container>
-            <el-main>                          
                 <el-row :gutter="10">
                     <el-col :xs="0" :sm="1" :md="2" :lg="4"><div class="empty"></div></el-col>
                     <el-col :xs="24" :sm="20" :md="18" :lg="16">
@@ -63,8 +61,6 @@
                     </el-col>
                     <el-col :xs="0" :sm="1" :md="2" :lg="4"><div class="empty"></div></el-col>
                 </el-row>                        
-            </el-main>
-        </el-container>
 
         <el-dialog
             title="New transfer"
@@ -120,7 +116,7 @@
             <el-table-column prop="to" label="To"></el-table-column>
             <el-table-column prop="amount" label="Amount"></el-table-column>
             <el-table-column prop="block" label="Block #"></el-table-column>
-            <el-table-column prop="status" label="Status"></el-table-column>
+            <el-table-column prop="status" label="Status" width="100"></el-table-column>
         </el-table>
     </script>
 
