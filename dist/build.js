@@ -17385,8 +17385,6 @@ function g1_512_lo(xh, xl) {
 
 
 
-window.eu = __WEBPACK_IMPORTED_MODULE_6_ethjs_util___default.a;
-
 var baseUrl = 'https://api.plasma-winter.io';
 
 /* harmony default export */ __webpack_exports__["a"] = ({
@@ -17394,7 +17392,7 @@ var baseUrl = 'https://api.plasma-winter.io';
     data: function data() {
         return {
             nonce: 0,
-            transferTo: '0x6394b37Cf80A7358b38068f0CA4760ad49983a1B',
+            transferTo: '',
             transferAmount: '0.001',
             depositAmount: null,
             withdrawAmount: null,
@@ -74807,7 +74805,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__ = __webpack_require__(126);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0b734b9a_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(409);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_7e81b913_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(409);
 var normalizeComponent = __webpack_require__(15)
 /* script */
 
@@ -74824,7 +74822,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0b734b9a_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_7e81b913_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
