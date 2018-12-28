@@ -21496,7 +21496,7 @@ window.app = new __WEBPACK_IMPORTED_MODULE_2_vue__["a" /* default */]({
                             // read store.account from local storage?
                             if (typeof window.ethereum !== 'undefined') {
                                 window.eth = new __WEBPACK_IMPORTED_MODULE_8_ethjs___default.a(web3.currentProvider);
-                                window.contract = eth.contract(__WEBPACK_IMPORTED_MODULE_7__contract__["a" /* default */]).at('0x17Fc594b619B975DF43BdC56103747c3ed6f5653');
+                                window.contract = eth.contract(__WEBPACK_IMPORTED_MODULE_7__contract__["a" /* default */]).at(window.contractAddress);
                             }
                             if (!__WEBPACK_IMPORTED_MODULE_6__store__["a" /* default */].account.address) {
                                 this.$router.push('/login');
