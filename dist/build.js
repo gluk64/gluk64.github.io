@@ -12726,11 +12726,11 @@ var ToolTip = function () {
 var store = {
     account: {
         address: null,
-        balance: 4,
+        balance: null,
         plasma: {
             id: null,
-            balance: 2,
-            nonce: 1,
+            balance: null,
+            nonce: null,
             key: null
         }
     }
@@ -16401,7 +16401,7 @@ function integerToFloat(integer, exp_bits, mantissa_bits, exp_base) {
     let power = integer.div(maxMantissa);
     const exponentBase = new BN(exp_base);
     let exponent = new BN(0);
-    if (integer.lte(new BN(exp_base))) {
+    if (integer.lte(new BN(maxMantissa))) {
         exponent = new BN(0);
     } else {
         while (power.gt(exponentBase)) {
@@ -16594,6 +16594,11 @@ function createTransaction(from, to, amount, fee, nonce, good_until_block, priva
 }
 
 function main() {
+    for (let i = 0; i < 20; i++) {
+        let bn = new BN(i);
+        let enc = integerToFloat(bn, 5, 11, 10);
+        console.log(enc.toString("hex"));
+    }
     const sk = new BN(elliptic.rand(32), 16, "be").umod(altBabyJubjub.n);
     const pub = altBabyJubjub.g.mul(sk);
     const message = elliptic.rand(16);
@@ -16633,6 +16638,8 @@ function newKey(seed) {
         packedPublicKey: y_packed
     };
 }
+
+// main();
 
 module.exports = {
     sign,
@@ -17331,6 +17338,44 @@ function g1_512_lo(xh, xl) {
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -17340,102 +17385,222 @@ function g1_512_lo(xh, xl) {
 
 
 
-var baseUrl = 'http://188.166.33.159:8080';
+window.eu = __WEBPACK_IMPORTED_MODULE_6_ethjs_util___default.a;
+
+var baseUrl = 'https://api.plasma-winter.io';
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     name: 'wallet',
     data: function data() {
         return {
-            store: __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */],
-            tx: null,
-
+            nonce: 0,
             transferTo: '0x6394b37Cf80A7358b38068f0CA4760ad49983a1B',
             transferAmount: '0.001',
-            transferNonce: 0,
-
             depositAmount: null,
-
-            withdrawAll: true,
             withdrawAmount: null,
 
-            updateInterval: null,
+            updateTimer: 0,
             countdown: 0,
+            alertType: null,
             result: null
         };
     },
     created: function created() {
-        var _this = this;
-
+        console.log('start');
         this.updateAccountInfo();
-        this.updateInterval = setInterval(function () {
-            return _this.updateAccountInfo();
-        }, 1000);
+        window.t = this;
     },
-    destroyed: function destroyed() {
-        clearInterval(this.updateInterval);
-    },
+    destroyed: function destroyed() {},
 
+    computed: {
+        store: function store() {
+            return __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */];
+        },
+        depositProblem: function depositProblem() {
+            if (!(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.balance > 0)) return "empty balance in the mainchain account";
+        },
+        doDepositProblem: function doDepositProblem() {
+            if (this.depositProblem) return this.depositProblem;
+            if (!(this.depositAmount > 0)) return "invalid deposit amount: " + this.depositAmount;
+            if (Number(this.depositAmount) > Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.balance)) return "deposit amount exceeds mainchain account balance: " + this.depositAmount + " > " + __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.balance;
+        },
+        withdrawProblem: function withdrawProblem() {
+            if (!(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.balance > 0)) return "empty balance in the Plasma account";
+        },
+        doWithdrawProblem: function doWithdrawProblem() {
+            if (this.depositProblem) return this.depositProblem;
+            if (Number(this.withdrawAmount) > Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.balance)) return "specified amount exceeds Plasma balance";
+            if (Number(this.nonce) < Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.nonce)) return "nonce must be greater then confirmed in Plasma: got " + this.nonce + ", expected >= " + __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.nonce;
+        },
+        transferProblem: function transferProblem() {
+            if (!__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id) return "no Plasma account exists yet";
+            if (!(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.balance > 0)) return "Plasma account has empty balance";
+            if (!__WEBPACK_IMPORTED_MODULE_6_ethjs_util___default.a.isHexString(this.transferTo)) return "`To` is not a valid ethereum address: " + this.transferTo;
+            if (!(this.transferAmount > 0)) return "positive amount required, e.g. 100.55";
+            if (Number(this.transferAmount) > Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.balance)) return "specified amount exceeds Plasma balance";
+            if (Number(this.nonce) < Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.nonce)) return "nonce must be greater then confirmed in Plasma: got " + this.nonce + ", expected >= " + __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.nonce;
+        }
+    },
     methods: {
-        deposit: function deposit() {
-            this.$refs.depositModal.hide();
-            var pub = __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.key.publicKey;
-            var maxFee = new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]();
-
-            console.log('deposit', this.depositAmount);
-            var value = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.toWei(this.depositAmount, 'ether');
-            var from = __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address;
-            console.log('deposit', value, from);
-
-            contract.deposit([pub.x, pub.y], maxFee, { value: value, from: from });
-        },
-        withdraw: function withdraw() {
-            this.$refs.withdrawModal.hide();
-            console.log('withdraw', this.withdrawAll ? 'all' : this.withdrawAmount);
-        },
-        alert: function alert(msg) {
-            this.result = msg;
-            this.countdown = 8;
-        },
-        transfer: function () {
+        deposit: function () {
             var _ref = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee() {
-                var from, to, privateKey, nonce, good_until_block, amount, fee, apiForm, result;
+                var pub, maxFee, value, from, hash;
                 return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
                     while (1) {
                         switch (_context.prev = _context.next) {
                             case 0:
-                                console.log('initiating transfer to', this.transferTo, this.transferAmount);
+                                this.$refs.depositModal.hide();
+                                pub = __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.key.publicKey;
+                                maxFee = new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]();
+                                value = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.toWei(this.depositAmount, 'ether');
+                                from = __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address;
+                                _context.next = 7;
+                                return contract.deposit([pub.x, pub.y], maxFee, { value: value, from: from });
 
-                                from = __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id;
+                            case 7:
+                                hash = _context.sent;
 
+                                this.alert('Deposit initiated, tx: ' + hash, 'success');
+
+                            case 9:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this);
+            }));
+
+            function deposit() {
+                return _ref.apply(this, arguments);
+            }
+
+            return deposit;
+        }(),
+        withdrawSome: function () {
+            var _ref2 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee2() {
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee2$(_context2) {
+                    while (1) {
+                        switch (_context2.prev = _context2.next) {
+                            case 0:
+                                this.$refs.withdrawModal.hide();
+                                this.plasmaTransfer(0, this.withdrawAmount);
+
+                            case 2:
+                            case 'end':
+                                return _context2.stop();
+                        }
+                    }
+                }, _callee2, this);
+            }));
+
+            function withdrawSome() {
+                return _ref2.apply(this, arguments);
+            }
+
+            return withdrawSome;
+        }(),
+        withdrawAll: function () {
+            var _ref3 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee3() {
+                var from, hash;
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee3$(_context3) {
+                    while (1) {
+                        switch (_context3.prev = _context3.next) {
+                            case 0:
+                                this.$refs.withdrawModal.hide();
+                                console.log('full withdraw');
+                                from = __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address;
+                                _context3.next = 5;
+                                return contract.exit({ from: from });
+
+                            case 5:
+                                hash = _context3.sent;
+
+                                this.alert('Full exit initiated, tx: ' + hash, 'success');
+
+                            case 7:
+                            case 'end':
+                                return _context3.stop();
+                        }
+                    }
+                }, _callee3, this);
+            }));
+
+            function withdrawAll() {
+                return _ref3.apply(this, arguments);
+            }
+
+            return withdrawAll;
+        }(),
+        alert: function alert(msg, alertType) {
+            this.result = msg;
+            this.countdown = 30;
+            this.alertType = alertType || 'danger';
+        },
+        transfer: function () {
+            var _ref4 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee4() {
+                var to;
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee4$(_context4) {
+                    while (1) {
+                        switch (_context4.prev = _context4.next) {
+                            case 0:
                                 if (__WEBPACK_IMPORTED_MODULE_6_ethjs_util___default.a.isHexString(this.transferTo)) {
-                                    _context.next = 5;
+                                    _context4.next = 3;
                                     break;
                                 }
 
                                 this.alert('to is not a hex string');
-                                return _context.abrupt('return');
+                                return _context4.abrupt('return');
 
-                            case 5:
-                                _context.next = 7;
+                            case 3:
+                                _context4.next = 5;
                                 return contract.ethereumAddressToAccountID(this.transferTo);
 
-                            case 7:
-                                to = _context.sent[0].toNumber();
+                            case 5:
+                                to = _context4.sent[0].toNumber();
 
                                 if (!(0 === to)) {
-                                    _context.next = 11;
+                                    _context4.next = 9;
                                     break;
                                 }
 
                                 this.alert('recepient not found');
-                                return _context.abrupt('return');
+                                return _context4.abrupt('return');
 
-                            case 11:
+                            case 9:
+                                this.plasmaTransfer(to, this.transferAmount);
+
+                            case 10:
+                            case 'end':
+                                return _context4.stop();
+                        }
+                    }
+                }, _callee4, this);
+            }));
+
+            function transfer() {
+                return _ref4.apply(this, arguments);
+            }
+
+            return transfer;
+        }(),
+        plasmaTransfer: function () {
+            var _ref5 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee5(to, amount) {
+                var from, privateKey, nonce, good_until_block, fee, apiForm, result;
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee5$(_context5) {
+                    while (1) {
+                        switch (_context5.prev = _context5.next) {
+                            case 0:
+                                console.log('initiating transfer to', to, amount);
+
+                                from = __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id;
+
+
+                                amount = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.toWei(amount, 'ether').div(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]('1000000000000')).toNumber();
+
                                 privateKey = __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.key.privateKey;
-                                nonce = this.transferNonce; //store.account.plasma.nonce;
+                                nonce = this.nonce; //store.account.plasma.nonce;
 
                                 good_until_block = 100;
-                                amount = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.toWei(this.transferAmount, 'ether').div(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]('1000000000000')).toNumber();
                                 fee = 0;
 
 
@@ -17444,96 +17609,118 @@ var baseUrl = 'http://188.166.33.159:8080';
                                 apiForm = __WEBPACK_IMPORTED_MODULE_7__contracts_lib_transaction_js___default.a.createTransaction(from, to, amount, fee, nonce, good_until_block, privateKey);
 
                                 console.log(JSON.stringify(apiForm));
-                                _context.next = 21;
+                                _context5.next = 12;
                                 return __WEBPACK_IMPORTED_MODULE_5_axios___default()({
                                     method: 'post',
                                     url: baseUrl + '/send',
                                     data: apiForm
                                 });
 
-                            case 21:
-                                result = _context.sent;
+                            case 12:
+                                result = _context5.sent;
 
-                                console.log(JSON.stringify(result.data));
-                                this.alert(result.data);
+                                if (result.data.accepted) {
+                                    this.alert('Transaction with nonce #' + this.nonce + ' accepted', 'success');
+                                    this.nonce++;
+                                } else {
+                                    this.alert('Transaction rejected!');
+                                }
 
-                            case 24:
+                            case 14:
                             case 'end':
-                                return _context.stop();
+                                return _context5.stop();
                         }
                     }
-                }, _callee, this);
+                }, _callee5, this);
             }));
 
-            function transfer() {
-                return _ref.apply(this, arguments);
+            function plasmaTransfer(_x, _x2) {
+                return _ref5.apply(this, arguments);
             }
 
-            return transfer;
+            return plasmaTransfer;
         }(),
         updateAccountInfo: function () {
-            var _ref2 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee2() {
-                var balance, id, result, _balance;
+            var _ref6 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee6() {
+                var _this = this;
 
-                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee2$(_context2) {
+                var newData, timer, balance, id, result, _balance;
+
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee6$(_context6) {
                     while (1) {
-                        switch (_context2.prev = _context2.next) {
+                        switch (_context6.prev = _context6.next) {
                             case 0:
-                                _context2.prev = 0;
-                                _context2.next = 3;
-                                return eth.getBalance(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address);
+                                newData = {};
+                                timer = this.updateTimer;
+                                _context6.prev = 2;
 
-                            case 3:
-                                balance = _context2.sent.toString();
+                                newData.address = ethereum.selectedAddress;
 
-                                __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.balance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(balance, 'ether');
+                                _context6.next = 6;
+                                return eth.getBalance(newData.address);
 
-                                _context2.next = 7;
-                                return contract.ethereumAddressToAccountID(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address);
+                            case 6:
+                                balance = _context6.sent.toString();
 
-                            case 7:
-                                id = _context2.sent[0].toNumber();
+                                newData.balance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(balance, 'ether');
 
-                                __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id = id;
+                                _context6.next = 10;
+                                return contract.ethereumAddressToAccountID(newData.address);
+
+                            case 10:
+                                id = _context6.sent[0].toNumber();
+
+                                newData.plasmaId = id;
 
                                 if (!(id > 0)) {
-                                    _context2.next = 16;
+                                    _context6.next = 19;
                                     break;
                                 }
 
-                                _context2.next = 12;
+                                _context6.next = 15;
                                 return __WEBPACK_IMPORTED_MODULE_5_axios___default()({
                                     method: 'get',
                                     url: baseUrl + '/account/' + id
                                 });
 
-                            case 12:
-                                result = _context2.sent;
+                            case 15:
+                                result = _context6.sent;
                                 _balance = new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](result.data.balance).mul(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]('1000000000000'));
 
-                                __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.balance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(_balance, 'ether');
-                                __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.nonce = result.data.nonce;
+                                newData.plasmaBalance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(_balance, 'ether');
+                                newData.plasmaNonce = result.data.nonce;
 
-                            case 16:
-                                _context2.next = 21;
+                            case 19:
+                                _context6.next = 23;
                                 break;
 
-                            case 18:
-                                _context2.prev = 18;
-                                _context2.t0 = _context2['catch'](0);
-
-                                console.log('status update failed: ', _context2.t0);
-
                             case 21:
+                                _context6.prev = 21;
+                                _context6.t0 = _context6['catch'](2);
+
+                            case 23:
+                                if (timer === this.updateTimer) {
+                                    // if this handler is still valid
+                                    __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address = newData.address;
+                                    __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.balance = newData.balance;
+                                    __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id = newData.plasmaId;
+                                    __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.balance = newData.plasmaBalance;
+                                    __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.nonce = newData.plasmaNonce;
+                                    this.updateTimer = setTimeout(function () {
+                                        return _this.updateAccountInfo();
+                                    }, 1000);
+                                }
+
+                            case 24:
                             case 'end':
-                                return _context2.stop();
+                                return _context6.stop();
                         }
                     }
-                }, _callee2, this, [[0, 18]]);
+                }, _callee6, this, [[2, 21]]);
             }));
 
             function updateAccountInfo() {
-                return _ref2.apply(this, arguments);
+                return _ref6.apply(this, arguments);
             }
 
             return updateAccountInfo;
@@ -74620,7 +74807,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__ = __webpack_require__(126);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2f83a7f3_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(409);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0b734b9a_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(409);
 var normalizeComponent = __webpack_require__(15)
 /* script */
 
@@ -74637,7 +74824,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2f83a7f3_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0b734b9a_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -75546,7 +75733,7 @@ module.exports = function spread(callback) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('b-navbar',{attrs:{"toggleable":"md","type":"dark","variant":"info"}},[_c('b-container',[_c('b-navbar-toggle',{attrs:{"target":"nav_collapse"}}),_vm._v(" "),_c('b-navbar-brand',[_vm._v("Plasma Wallet")]),_vm._v(" "),_c('b-collapse',{attrs:{"is-nav":"","id":"nav_collapse"}},[_c('b-navbar-nav',[_c('b-nav-item',{attrs:{"href":"#","active":""}},[_vm._v("Account")]),_vm._v(" "),_c('b-nav-item',{attrs:{"href":"#","disabled":""}},[_vm._v("Transactions")])],1),_vm._v(" "),_c('b-navbar-nav',{staticClass:"ml-auto"},[_c('b-nav-item',{attrs:{"right":""}},[_vm._v(_vm._s(_vm.store.account.address))])],1)],1)],1)],1),_vm._v(" "),_c('br'),_vm._v(" "),_c('b-container',{staticClass:"bv-example-row"},[_c('b-row',[_c('b-col',{staticClass:"col-xl-8 col-lg-7 col-md-6 col-sm-12",attrs:{"sm":"6","order":"2"}},[_c('b-card',{staticClass:"mb-4",attrs:{"title":"Transfer in Plasma"}},[_c('b-alert',{staticClass:"mt-2",attrs:{"show":"","dismissible":"","variant":"success","fade":"","show":_vm.countdown},on:{"dismissed":function($event){_vm.countdown=0}}},[_vm._v("\n                        "+_vm._s(_vm.result)+"\n                    ")]),_vm._v(" "),_c('b-row',{staticClass:"mb-3 mt-4"},[_c('b-col',{staticClass:"col-lg-2",attrs:{"sm":"3"}},[_c('label',{attrs:{"for":"transferToInput"}},[_vm._v("To:")])]),_vm._v(" "),_c('b-col',{staticClass:"col-lg-10",attrs:{"sm":"9"}},[_c('b-form-input',{attrs:{"id":"transferToInput","type":"text","placeholder":"0xb4aaffeaacb27098d9545a3c0e36924af9eedfe0"},model:{value:(_vm.transferTo),callback:function ($$v) {_vm.transferTo=$$v},expression:"transferTo"}})],1)],1),_vm._v(" "),_c('b-row',{staticClass:"mb-3"},[_c('b-col',{staticClass:"col-lg-2",attrs:{"sm":"3"}},[_c('label',{attrs:{"for":"transferAmountInput"}},[_vm._v("Amount:")])]),_vm._v(" "),_c('b-col',{staticClass:"col-lg-10",attrs:{"sm":"9"}},[_c('b-form-input',{attrs:{"id":"transferAmountInput","placeholder":"7.50"},model:{value:(_vm.transferAmount),callback:function ($$v) {_vm.transferAmount=$$v},expression:"transferAmount"}})],1)],1),_vm._v(" "),_c('b-row',{staticClass:"mb-3"},[_c('b-col',{staticClass:"col-lg-2",attrs:{"sm":"3"}},[_c('label',{attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")])]),_vm._v(" "),_c('b-col',{staticClass:"col-lg-10",attrs:{"sm":"9"}},[_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"7.50"},model:{value:(_vm.transferNonce),callback:function ($$v) {_vm.transferNonce=$$v},expression:"transferNonce"}})],1)],1),_vm._v(" "),_c('b-btn',{staticClass:"float-right",attrs:{"variant":"outline-primary"},on:{"click":_vm.transfer}},[_vm._v("Submit transaction")])],1)],1),_vm._v(" "),_c('b-col',{staticClass:"col-xl-4 col-lg-5 col-md-6 col-sm-12 mb-5",attrs:{"sm":"6","order":"1"}},[_c('b-card',{attrs:{"title":"Account info"}},[_c('b-card',{staticClass:"mb-3"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Mainchain")])]),_vm._v(" "),_c('label',{attrs:{"for":"addr"}},[_vm._v("Address:")]),_vm._v(" "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"addr","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.address),callback:function ($$v) {_vm.$set(_vm.store.account, "address", $$v)},expression:"store.account.address"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"4"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.balance)+" ETH")])],1)],1),_vm._v(" "),_c('b-row',{staticClass:"mb-0 mt-0"},[_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.depositModal",modifiers:{"depositModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary"}},[_vm._v("⇩ Deposit")])],1),_vm._v(" "),_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.withdrawModal",modifiers:{"withdrawModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary"}},[_vm._v("Withdraw ⇧")])],1)],1),_vm._v(" "),_c('b-card',{staticClass:"mt-2"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Plasma")])]),_vm._v(" "),_c('label',{attrs:{"for":"acc_id"}},[_vm._v("Account ID:")]),_vm._v(" "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"acc_id","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.plasma.id),callback:function ($$v) {_vm.$set(_vm.store.account.plasma, "id", $$v)},expression:"store.account.plasma.id"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"4"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.balance)+" ETH")])],1),_vm._v(" "),_c('b-row',[_c('b-col',{attrs:{"cols":"4"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.nonce))])],1)],1)],1)],1)],1)],1),_vm._v(" "),_c('b-modal',{ref:"depositModal",attrs:{"id":"depositModal","title":"Deposit","hide-footer":""}},[_c('label',{attrs:{"for":"depositAmountInput"}},[_vm._v("Amount:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"depositAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.depositAmount),callback:function ($$v) {_vm.depositAmount=$$v},expression:"depositAmount"}}),_vm._v(" "),_c('b-btn',{staticClass:"mt-4 float-right",attrs:{"variant":"primary"},on:{"click":_vm.deposit}},[_vm._v("Deposit")])],1),_vm._v(" "),_c('b-modal',{ref:"withdrawModal",attrs:{"id":"withdrawModal","title":"Withdrawal","hide-footer":""}},[_c('b-form-checkbox',{attrs:{"plain":"","aria-describedby":"flavours","aria-controls":"flavours"},model:{value:(_vm.withdrawAll),callback:function ($$v) {_vm.withdrawAll=$$v},expression:"withdrawAll"}},[_vm._v("Withdraw all funds")]),_vm._v(" "),(!_vm.withdrawAll)?_c('div',[_c('label',{attrs:{"for":"withdrawAmountInput"}},[_vm._v("Amount:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"withdrawAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.withdrawAmount),callback:function ($$v) {_vm.withdrawAmount=$$v},expression:"withdrawAmount"}})],1):_vm._e(),_vm._v(" "),_c('b-btn',{staticClass:"mt-4 float-right",attrs:{"variant":"primary"},on:{"click":_vm.withdraw}},[_vm._v("Withdraw")])],1)],1)}
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('b-navbar',{attrs:{"toggleable":"md","type":"dark","variant":"info"}},[_c('b-container',[_c('b-navbar-toggle',{attrs:{"target":"nav_collapse"}}),_vm._v(" "),_c('b-navbar-brand',[_vm._v("Plasma Wallet")]),_vm._v(" "),_c('b-collapse',{attrs:{"is-nav":"","id":"nav_collapse"}},[_c('b-navbar-nav',[_c('b-nav-item',{attrs:{"href":"#","active":""}},[_vm._v("Account")]),_vm._v(" "),_c('b-nav-item',{attrs:{"href":"#","disabled":""}},[_vm._v("Transactions")])],1),_vm._v(" "),_c('b-navbar-nav',{staticClass:"ml-auto"},[_c('b-nav-item',{attrs:{"right":""}},[_vm._v(_vm._s(_vm.store.account.address))])],1)],1)],1)],1),_vm._v(" "),_c('br'),_vm._v(" "),_c('b-container',{staticClass:"bv-example-row"},[_c('b-alert',{staticClass:"mt-2",attrs:{"show":"","dismissible":"","variant":_vm.alertType,"fade":"","show":_vm.countdown},on:{"dismissed":function($event){_vm.countdown=0}}},[_vm._v("\n            "+_vm._s(_vm.result)+"\n        ")]),_vm._v(" "),_c('b-row',[_c('b-col',{staticClass:"col-xl-8 col-lg-7 col-md-6 col-sm-12",attrs:{"sm":"6","order":"2"}},[_c('b-card',{staticClass:"mb-4 d-flex",attrs:{"title":"Transfer in Plasma"}},[_c('label',{attrs:{"for":"transferToInput"}},[_vm._v("To:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferToInput","type":"text","placeholder":"0xb4aaffeaacb27098d9545a3c0e36924af9eedfe0"},model:{value:(_vm.transferTo),callback:function ($$v) {_vm.transferTo=$$v},expression:"transferTo"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                            (max "),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.transferAmount=_vm.store.account.plasma.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.balance || 0))]),_vm._v(" ETH):\n                    "),_c('b-form-input',{attrs:{"id":"transferAmountInput","placeholder":"7.50","type":"number"},model:{value:(_vm.transferAmount),callback:function ($$v) {_vm.transferAmount=$$v},expression:"transferAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"float-right mt-4",attrs:{"id":"transferBtn"}},[_c('b-btn',{attrs:{"variant":"outline-primary","disabled":!!_vm.transferProblem},on:{"click":_vm.transfer}},[_vm._v("Submit transaction")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"transferBtn","disabled":!_vm.transferProblem,"triggers":"hover"}},[_vm._v("\n                        Transfer not possible: "+_vm._s(_vm.transferProblem)+"\n                    ")])],1)],1),_vm._v(" "),_c('b-col',{staticClass:"col-xl-4 col-lg-5 col-md-6 col-sm-12 mb-5",attrs:{"sm":"6","order":"1"}},[_c('b-card',{attrs:{"title":"Account info"}},[_c('b-card',{staticClass:"mb-3"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Mainchain")])]),_vm._v(" "),_c('label',{attrs:{"for":"addr"}},[_vm._v("Address:")]),_vm._v(" "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"addr","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.address),callback:function ($$v) {_vm.$set(_vm.store.account, "address", $$v)},expression:"store.account.address"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"4"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.balance)+" ETH")])],1)],1),_vm._v(" "),_c('b-row',{staticClass:"mb-0 mt-0"},[_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"depositBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.depositModal",modifiers:{"depositModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.depositProblem}},[_vm._v("⇩ Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"depositBtn","disabled":!_vm.depositProblem,"triggers":"hover"}},[_vm._v("\n                                Deposit not possible: "+_vm._s(_vm.depositProblem)+"\n                            ")])],1),_vm._v(" "),_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"withdrawBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.withdrawModal",modifiers:{"withdrawModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.withdrawProblem}},[_vm._v("Withdraw ⇧")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"withdrawBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                                Withdrawal not possible: "+_vm._s(_vm.withdrawProblem)+"\n                            ")])],1)],1),_vm._v(" "),_c('b-card',{staticClass:"mt-2"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Plasma")])]),_vm._v(" "),_c('label',{attrs:{"for":"acc_id"}},[_vm._v("Account ID:")]),_vm._v(" "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"acc_id","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.plasma.id),callback:function ($$v) {_vm.$set(_vm.store.account.plasma, "id", $$v)},expression:"store.account.plasma.id"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"4"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.balance || 0)+" ETH")])],1),_vm._v(" "),_c('b-row',[_c('b-col',{attrs:{"cols":"4"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.nonce))])],1)],1)],1)],1)],1)],1),_vm._v(" "),_c('b-modal',{ref:"depositModal",attrs:{"id":"depositModal","title":"Deposit","hide-footer":""}},[_c('label',{attrs:{"for":"depositAmountInput"}},[_vm._v("Amount")]),_vm._v(" \n            (max "),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.depositAmount=_vm.store.account.balance}}},[_vm._v(_vm._s(_vm.store.account.balance))]),_vm._v(" ETH):\n        "),_c('b-form-input',{attrs:{"id":"depositAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.depositAmount),callback:function ($$v) {_vm.depositAmount=$$v},expression:"depositAmount"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doDepositBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doDepositProblem},on:{"click":_vm.deposit}},[_vm._v("Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doDepositBtn","disabled":!_vm.doDepositProblem,"triggers":"hover"}},[_vm._v("\n            Deposit not possible: "+_vm._s(_vm.doDepositProblem)+"\n        ")])],1),_vm._v(" "),_c('b-modal',{ref:"withdrawModal",attrs:{"id":"withdrawModal","title":"Withdrawal","hide-footer":""}},[_c('b-tabs',{attrs:{"pills":"","card":""}},[_c('b-tab',{attrs:{"title":"Partial withdrawal","active":""}},[_c('label',{staticClass:"mt-4",attrs:{"for":"withdrawAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                    (max "),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.withdrawAmount=_vm.store.account.plasma.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.balance))]),_vm._v(" ETH):\n                "),_c('b-form-input',{attrs:{"id":"withdrawAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.withdrawAmount),callback:function ($$v) {_vm.withdrawAmount=$$v},expression:"withdrawAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doWithdrawBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doWithdrawProblem},on:{"click":_vm.withdrawSome}},[_vm._v("Withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doWithdrawBtn","disabled":!_vm.doWithdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.doWithdrawProblem)+"\n                ")])],1),_vm._v(" "),_c('b-tab',{staticClass:"mb-4",attrs:{"title":"Full exit"}},[_c('p',[_vm._v("This will close your account and withdraw all money from it")]),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doExitBtn"}},[_c('b-btn',{attrs:{"variant":"danger","disabled":!!_vm.withdrawProblem},on:{"click":_vm.withdrawAll}},[_vm._v("Close & withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doExitBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.withdrawProblem)+"\n                ")])],1)],1)],1)],1)}
 var staticRenderFns = []
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
