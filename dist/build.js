@@ -2525,17 +2525,6 @@ module.exports = g;
 
 var elliptic = exports;
 
-<<<<<<< HEAD
-elliptic.version = __webpack_require__(362).version;
-elliptic.utils = __webpack_require__(363);
-elliptic.rand = __webpack_require__(365);
-elliptic.curve = __webpack_require__(40);
-elliptic.curves = __webpack_require__(371);
-
-// Protocols
-elliptic.ec = __webpack_require__(379);
-elliptic.eddsa = __webpack_require__(383);
-=======
 elliptic.version = __webpack_require__(361).version;
 elliptic.utils = __webpack_require__(362);
 elliptic.rand = __webpack_require__(364);
@@ -2545,7 +2534,6 @@ elliptic.curves = __webpack_require__(370);
 // Protocols
 elliptic.ec = __webpack_require__(378);
 elliptic.eddsa = __webpack_require__(382);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 
 /***/ }),
@@ -2556,11 +2544,7 @@ elliptic.eddsa = __webpack_require__(382);
 
 
 var bind = __webpack_require__(128);
-<<<<<<< HEAD
-var isBuffer = __webpack_require__(397);
-=======
 var isBuffer = __webpack_require__(396);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /*global toString:true*/
 
@@ -3186,11 +3170,7 @@ function clickHandlerFactory(_ref3) {
 
   var Buffer;
   try {
-<<<<<<< HEAD
-    Buffer = __webpack_require__(364).Buffer;
-=======
     Buffer = __webpack_require__(363).Buffer;
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
   } catch (e) {
   }
 
@@ -6566,11 +6546,7 @@ function clickHandlerFactory(_ref3) {
   };
 })(typeof module === 'undefined' || module, this);
 
-<<<<<<< HEAD
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20)(module)))
-=======
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)(module)))
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /***/ }),
 /* 14 */
@@ -6579,11 +6555,7 @@ function clickHandlerFactory(_ref3) {
 "use strict";
 
 
-<<<<<<< HEAD
-var assert = __webpack_require__(21);
-=======
 var assert = __webpack_require__(19);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var inherits = __webpack_require__(41);
 
 exports.inherits = inherits;
@@ -6987,8 +6959,6 @@ module.exports = function (it) {
 
 // shim for using process in browser
 var process = module.exports = {};
-<<<<<<< HEAD
-=======
 
 // cached from whatever global is present so that test runners that stub it
 // don't break things.  But we need to wrap it in a try catch in case it is
@@ -7199,70 +7169,15 @@ module.exports = function(module) {
 	}
 	return module;
 };
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 // cached from whatever global is present so that test runners that stub it
 // don't break things.  But we need to wrap it in a try catch in case it is
 // wrapped in strict mode code which doesn't define any globals.  It's inside a
 // function because try/catches deoptimize in certain engines.
 
-<<<<<<< HEAD
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-=======
 /***/ }),
 /* 19 */
 /***/ (function(module, exports) {
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 
 }
@@ -7292,28 +7207,6 @@ function runClearTimeout(marker) {
 
 
 
-<<<<<<< HEAD
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-=======
 /***/ }),
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -7324,7 +7217,6 @@ var ctx = __webpack_require__(33);
 var hide = __webpack_require__(21);
 var has = __webpack_require__(37);
 var PROTOTYPE = 'prototype';
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 function drainQueue() {
     if (draining) {
@@ -7380,27 +7272,6 @@ process.versions = {};
 
 function noop() {}
 
-<<<<<<< HEAD
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-=======
 /***/ }),
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -7412,17 +7283,12 @@ module.exports = __webpack_require__(26) ? function (object, key, value) {
 } : function (object, key, value) {
   object[key] = value;
   return object;
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 };
 process.umask = function() { return 0; };
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 18 */
-=======
 /* 22 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports) {
 
 /*
@@ -7504,11 +7370,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 19 */
-=======
 /* 23 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -7736,142 +7598,9 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 20 */
-/***/ (function(module, exports) {
-
-module.exports = function(module) {
-	if(!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if(!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-module.exports = assert;
-
-function assert(val, msg) {
-  if (!val)
-    throw new Error(msg || 'Assertion failed');
-}
-
-assert.equal = function assertEqual(l, r, msg) {
-  if (l != r)
-    throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
-};
-
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var global = __webpack_require__(6);
-var core = __webpack_require__(10);
-var ctx = __webpack_require__(33);
-var hide = __webpack_require__(23);
-var has = __webpack_require__(37);
-var PROTOTYPE = 'prototype';
-
-var $export = function (type, name, source) {
-  var IS_FORCED = type & $export.F;
-  var IS_GLOBAL = type & $export.G;
-  var IS_STATIC = type & $export.S;
-  var IS_PROTO = type & $export.P;
-  var IS_BIND = type & $export.B;
-  var IS_WRAP = type & $export.W;
-  var exports = IS_GLOBAL ? core : core[name] || (core[name] = {});
-  var expProto = exports[PROTOTYPE];
-  var target = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE];
-  var key, own, out;
-  if (IS_GLOBAL) source = name;
-  for (key in source) {
-    // contains in native
-    own = !IS_FORCED && target && target[key] !== undefined;
-    if (own && has(exports, key)) continue;
-    // export native or passed
-    out = own ? target[key] : source[key];
-    // prevent global pollution for namespaces
-    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
-    // bind timers to global for call from export context
-    : IS_BIND && own ? ctx(out, global)
-    // wrap global constructors for prevent change them in library
-    : IS_WRAP && target[key] == out ? (function (C) {
-      var F = function (a, b, c) {
-        if (this instanceof C) {
-          switch (arguments.length) {
-            case 0: return new C();
-            case 1: return new C(a);
-            case 2: return new C(a, b);
-          } return new C(a, b, c);
-        } return C.apply(this, arguments);
-      };
-      F[PROTOTYPE] = C[PROTOTYPE];
-      return F;
-    // make static versions for prototype methods
-    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
-    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
-    if (IS_PROTO) {
-      (exports.virtual || (exports.virtual = {}))[key] = out;
-      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
-      if (type & $export.R && expProto && !expProto[key]) hide(expProto, key, out);
-    }
-  }
-};
-// type bitmap
-$export.F = 1;   // forced
-$export.G = 2;   // global
-$export.S = 4;   // static
-$export.P = 8;   // proto
-$export.B = 16;  // bind
-$export.W = 32;  // wrap
-$export.U = 64;  // safe
-$export.R = 128; // real proto method for `library`
-module.exports = $export;
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var dP = __webpack_require__(35);
-var createDesc = __webpack_require__(68);
-module.exports = __webpack_require__(26) ? function (object, key, value) {
-  return dP.f(object, key, createDesc(1, value));
-} : function (object, key, value) {
-  object[key] = value;
-  return object;
-};
-
-
-/***/ }),
 /* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
-=======
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var isHexPrefixed = __webpack_require__(28);
 
 /**
@@ -7937,11 +7666,7 @@ module.exports = function isHexPrefixed(str) {
 /* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-var BN = __webpack_require__(323);
-=======
 var BN = __webpack_require__(324);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var stripHexPrefix = __webpack_require__(24);
 
 /**
@@ -7989,11 +7714,7 @@ module.exports = function numberToBN(arg) {
 
 
 var utils = __webpack_require__(14);
-<<<<<<< HEAD
-var assert = __webpack_require__(21);
-=======
 var assert = __webpack_require__(19);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 function BlockHash() {
   this.pending = null;
@@ -10816,17 +10537,10 @@ Popper.Defaults = Defaults;
 
 var curve = exports;
 
-<<<<<<< HEAD
-curve.base = __webpack_require__(367);
-curve.short = __webpack_require__(368);
-curve.mont = __webpack_require__(369);
-curve.edwards = __webpack_require__(370);
-=======
 curve.base = __webpack_require__(366);
 curve.short = __webpack_require__(367);
 curve.mont = __webpack_require__(368);
 curve.edwards = __webpack_require__(369);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 
 /***/ }),
@@ -13253,15 +12967,9 @@ var hash = exports;
 
 hash.utils = __webpack_require__(14);
 hash.common = __webpack_require__(30);
-<<<<<<< HEAD
-hash.sha = __webpack_require__(372);
-hash.ripemd = __webpack_require__(376);
-hash.hmac = __webpack_require__(377);
-=======
 hash.sha = __webpack_require__(371);
 hash.ripemd = __webpack_require__(375);
 hash.hmac = __webpack_require__(376);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 // Proxy hash functions to the main object
 hash.sha1 = hash.sha.sha1;
@@ -13280,11 +12988,7 @@ hash.ripemd160 = hash.ripemd.ripemd160;
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(9);
-<<<<<<< HEAD
-var normalizeHeaderName = __webpack_require__(399);
-=======
 var normalizeHeaderName = __webpack_require__(398);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -13387,15 +13091,9 @@ module.exports = defaults;
 "use strict";
 
 var LIBRARY = __webpack_require__(44);
-<<<<<<< HEAD
-var $export = __webpack_require__(22);
-var redefine = __webpack_require__(143);
-var hide = __webpack_require__(23);
-=======
 var $export = __webpack_require__(20);
 var redefine = __webpack_require__(143);
 var hide = __webpack_require__(21);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var Iterators = __webpack_require__(27);
 var $iterCreate = __webpack_require__(144);
 var setToStringTag = __webpack_require__(49);
@@ -15732,20 +15430,6 @@ var PopOver = function (_ToolTip) {
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 
-<<<<<<< HEAD
-var EthQuery = __webpack_require__(319);
-var EthFilter = __webpack_require__(63);
-var EthContract = __webpack_require__(327);
-var HttpProvider = __webpack_require__(342);
-var abi = __webpack_require__(344);
-// const getTxSuccess = require('ethjs-transaction-success'); // eslint-disable-line
-var unit = __webpack_require__(348);
-var keccak256 = __webpack_require__(350).keccak_256;
-var toBN = __webpack_require__(29);
-var BN = __webpack_require__(351);
-var utils = __webpack_require__(352);
-var getTransactionSuccess = __webpack_require__(353);
-=======
 var EthQuery = __webpack_require__(320);
 var EthFilter = __webpack_require__(63);
 var EthContract = __webpack_require__(328);
@@ -15758,7 +15442,6 @@ var toBN = __webpack_require__(29);
 var BN = __webpack_require__(352);
 var utils = __webpack_require__(353);
 var getTransactionSuccess = __webpack_require__(354);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 module.exports = Eth;
 
@@ -16315,11 +15998,7 @@ function hasTransactionObject(args) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ethjs_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_ethjs_util__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__contracts_lib_transaction_js__ = __webpack_require__(121);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__contracts_lib_transaction_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__contracts_lib_transaction_js__);
-<<<<<<< HEAD
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_js_sha3__ = __webpack_require__(390);
-=======
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_js_sha3__ = __webpack_require__(389);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_js_sha3___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_js_sha3__);
 
 
@@ -16391,18 +16070,6 @@ function hasTransactionObject(args) {
 
                                 hash = Object(__WEBPACK_IMPORTED_MODULE_5_js_sha3__["keccak256"])(sig);
 
-<<<<<<< HEAD
-                                console.log('hash', hash);
-                                __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.key = Object(__WEBPACK_IMPORTED_MODULE_4__contracts_lib_transaction_js__["newKey"])(sig);
-                                console.log(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.key);
-
-                                this.$parent.$router.push('/wallet');
-                                _context.next = 24;
-                                break;
-
-                            case 21:
-                                _context.prev = 21;
-=======
                                 __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.key = Object(__WEBPACK_IMPORTED_MODULE_4__contracts_lib_transaction_js__["newKey"])(hash);
                                 console.log(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.key);
 
@@ -16412,25 +16079,16 @@ function hasTransactionObject(args) {
 
                             case 20:
                                 _context.prev = 20;
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
                                 _context.t0 = _context['catch'](0);
 
                                 console.log('login failed: ', _context.t0);
 
-<<<<<<< HEAD
-                            case 24:
-=======
                             case 23:
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
                             case 'end':
                                 return _context.stop();
                         }
                     }
-<<<<<<< HEAD
-                }, _callee, this, [[0, 21]]);
-=======
                 }, _callee, this, [[0, 20]]);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
             }));
 
             function login() {
@@ -16676,11 +16334,7 @@ module.exports = {
 
 const elliptic = __webpack_require__(8);
 const BN = __webpack_require__(13);
-<<<<<<< HEAD
-const assert = __webpack_require__(386);
-=======
 const assert = __webpack_require__(385);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 const Buffer = __webpack_require__(5).Buffer; // note: the trailing slash is important!
 
 //! `Fr modulus = 21888242871839275222246405745257275088548364400416034343698204186575808495617`
@@ -17159,11 +16813,7 @@ exports.g1_256 = g1_256;
 var utils = __webpack_require__(14);
 var common = __webpack_require__(30);
 var shaCommon = __webpack_require__(123);
-<<<<<<< HEAD
-var assert = __webpack_require__(21);
-=======
 var assert = __webpack_require__(19);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 var sum32 = utils.sum32;
 var sum32_4 = utils.sum32_4;
@@ -17274,11 +16924,7 @@ SHA256.prototype._digest = function digest(enc) {
 
 var utils = __webpack_require__(14);
 var common = __webpack_require__(30);
-<<<<<<< HEAD
-var assert = __webpack_require__(21);
-=======
 var assert = __webpack_require__(19);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 var rotr64_hi = utils.rotr64_hi;
 var rotr64_lo = utils.rotr64_lo;
@@ -17620,11 +17266,7 @@ function g1_512_lo(xh, xl) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_bn_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_bn_js__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_ethjs__ = __webpack_require__(113);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_ethjs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_ethjs__);
-<<<<<<< HEAD
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_axios__ = __webpack_require__(395);
-=======
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_axios__ = __webpack_require__(394);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_axios__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_ethjs_util__ = __webpack_require__(120);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_ethjs_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_ethjs_util__);
@@ -17766,22 +17408,6 @@ function g1_512_lo(xh, xl) {
 //
 //
 //
-<<<<<<< HEAD
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-=======
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 
 
@@ -18128,18 +17754,6 @@ var baseUrl = 'https://api.plasma-winter.io';
                                 });
 
                             case 15:
-<<<<<<< HEAD
-                                result = _context7.sent;
-
-                                if (!result.error) {
-                                    newData.plasma = result.data;
-                                    newData.plasmaBalance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](newData.plasma.verified.balance).mul(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]('1000000000000')), 'ether');
-                                    newData.plasmaPendingBalance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](newData.plasma.pending.balance).mul(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]('1000000000000')), 'ether');
-                                    newData.plasmaPendingNonce = newData.plasma.pending.nonce;
-                                } else {
-                                    console.log('could not fetch data from server: ', result.error);
-                                }
-=======
                                 result = _context6.sent;
 
                                 // todo - use get multiplier from the smart-contract
@@ -18147,7 +17761,6 @@ var baseUrl = 'https://api.plasma-winter.io';
 
                                 newData.plasmaBalance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(_balance, 'ether');
                                 newData.plasmaNonce = result.data.pending.nonce;
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
                             case 17:
                                 _context7.next = 21;
@@ -18251,11 +17864,7 @@ var baseUrl = 'https://api.plasma-winter.io';
 
   var Buffer;
   try {
-<<<<<<< HEAD
-    Buffer = __webpack_require__(394).Buffer;
-=======
     Buffer = __webpack_require__(393).Buffer;
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
   } catch (e) {
   }
 
@@ -21631,11 +21240,7 @@ var baseUrl = 'https://api.plasma-winter.io';
   };
 })(typeof module === 'undefined' || module, this);
 
-<<<<<<< HEAD
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20)(module)))
-=======
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)(module)))
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /***/ }),
 /* 128 */
@@ -21663,21 +21268,12 @@ module.exports = function bind(fn, thisArg) {
 
 
 var utils = __webpack_require__(9);
-<<<<<<< HEAD
-var settle = __webpack_require__(400);
-var buildURL = __webpack_require__(402);
-var parseHeaders = __webpack_require__(403);
-var isURLSameOrigin = __webpack_require__(404);
-var createError = __webpack_require__(130);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(405);
-=======
 var settle = __webpack_require__(399);
 var buildURL = __webpack_require__(401);
 var parseHeaders = __webpack_require__(402);
 var isURLSameOrigin = __webpack_require__(403);
 var createError = __webpack_require__(130);
 var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(404);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -21774,11 +21370,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-<<<<<<< HEAD
-      var cookies = __webpack_require__(406);
-=======
       var cookies = __webpack_require__(405);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -21862,11 +21454,7 @@ module.exports = function xhrAdapter(config) {
 "use strict";
 
 
-<<<<<<< HEAD
-var enhanceError = __webpack_require__(401);
-=======
 var enhanceError = __webpack_require__(400);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -21939,14 +21527,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_bootstrap_vue_dist_bootstrap_vue_css__ = __webpack_require__(315);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_bootstrap_vue_dist_bootstrap_vue_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_bootstrap_vue_dist_bootstrap_vue_css__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__store__ = __webpack_require__(61);
-<<<<<<< HEAD
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_ethjs__ = __webpack_require__(113);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_ethjs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_ethjs__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_vue_router__ = __webpack_require__(354);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__App_vue__ = __webpack_require__(355);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__Login_vue__ = __webpack_require__(359);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__Wallet_vue__ = __webpack_require__(393);
-=======
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__contract__ = __webpack_require__(316);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_ethjs__ = __webpack_require__(113);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_ethjs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_ethjs__);
@@ -21955,7 +21535,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__Login_vue__ = __webpack_require__(358);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__Wallet_vue__ = __webpack_require__(392);
 
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 
 
@@ -22915,11 +22494,7 @@ module.exports = function (it, S) {
 /* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-module.exports = __webpack_require__(23);
-=======
 module.exports = __webpack_require__(21);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 
 /***/ }),
@@ -22934,11 +22509,7 @@ var setToStringTag = __webpack_require__(49);
 var IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-<<<<<<< HEAD
-__webpack_require__(23)(IteratorPrototype, __webpack_require__(11)('iterator'), function () { return this; });
-=======
 __webpack_require__(21)(IteratorPrototype, __webpack_require__(11)('iterator'), function () { return this; });
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 module.exports = function (Constructor, NAME, next) {
   Constructor.prototype = create(IteratorPrototype, { next: descriptor(1, next) });
@@ -23102,11 +22673,7 @@ module.exports = Object.getPrototypeOf || function (O) {
 
 __webpack_require__(152);
 var global = __webpack_require__(6);
-<<<<<<< HEAD
-var hide = __webpack_require__(23);
-=======
 var hide = __webpack_require__(21);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var Iterators = __webpack_require__(27);
 var TO_STRING_TAG = __webpack_require__(11)('toStringTag');
 
@@ -23192,11 +22759,7 @@ var LIBRARY = __webpack_require__(44);
 var global = __webpack_require__(6);
 var ctx = __webpack_require__(33);
 var classof = __webpack_require__(75);
-<<<<<<< HEAD
-var $export = __webpack_require__(22);
-=======
 var $export = __webpack_require__(20);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var isObject = __webpack_require__(25);
 var aFunction = __webpack_require__(34);
 var anInstance = __webpack_require__(156);
@@ -23678,11 +23241,7 @@ module.exports = navigator && navigator.userAgent || '';
 /* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-var hide = __webpack_require__(23);
-=======
 var hide = __webpack_require__(21);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 module.exports = function (target, src, safe) {
   for (var key in src) {
     if (safe && target[key]) target[key] = src[key];
@@ -23747,11 +23306,7 @@ module.exports = function (exec, skipClosing) {
 "use strict";
 // https://github.com/tc39/proposal-promise-finally
 
-<<<<<<< HEAD
-var $export = __webpack_require__(22);
-=======
 var $export = __webpack_require__(20);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var core = __webpack_require__(10);
 var global = __webpack_require__(6);
 var speciesConstructor = __webpack_require__(76);
@@ -23778,11 +23333,7 @@ $export($export.P + $export.R, 'Promise', { 'finally': function (onFinally) {
 "use strict";
 
 // https://github.com/tc39/proposal-promise-try
-<<<<<<< HEAD
-var $export = __webpack_require__(22);
-=======
 var $export = __webpack_require__(20);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var newPromiseCapability = __webpack_require__(51);
 var perform = __webpack_require__(78);
 
@@ -40305,21 +39856,13 @@ var content = __webpack_require__(242);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-<<<<<<< HEAD
-var update = __webpack_require__(19)("382bf6d4", content, true, {});
-=======
 var update = __webpack_require__(23)("382bf6d4", content, true, {});
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /***/ }),
 /* 242 */
 /***/ (function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-exports = module.exports = __webpack_require__(18)(false);
-=======
 exports = module.exports = __webpack_require__(22)(false);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 // imports
 
 
@@ -40769,21 +40312,13 @@ var content = __webpack_require__(251);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-<<<<<<< HEAD
-var update = __webpack_require__(19)("34299824", content, true, {});
-=======
 var update = __webpack_require__(23)("34299824", content, true, {});
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /***/ }),
 /* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-exports = module.exports = __webpack_require__(18)(false);
-=======
 exports = module.exports = __webpack_require__(22)(false);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 // imports
 
 
@@ -41884,21 +41419,13 @@ var content = __webpack_require__(269);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-<<<<<<< HEAD
-var update = __webpack_require__(19)("1e75fd1b", content, true, {});
-=======
 var update = __webpack_require__(23)("1e75fd1b", content, true, {});
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /***/ }),
 /* 269 */
 /***/ (function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-exports = module.exports = __webpack_require__(18)(false);
-=======
 exports = module.exports = __webpack_require__(22)(false);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 // imports
 
 
@@ -43508,21 +43035,13 @@ var content = __webpack_require__(292);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-<<<<<<< HEAD
-var update = __webpack_require__(19)("2f6c61b7", content, true, {});
-=======
 var update = __webpack_require__(23)("2f6c61b7", content, true, {});
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /***/ }),
 /* 292 */
 /***/ (function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-exports = module.exports = __webpack_require__(18)(false);
-=======
 exports = module.exports = __webpack_require__(22)(false);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 // imports
 
 
@@ -43692,21 +43211,13 @@ var content = __webpack_require__(298);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-<<<<<<< HEAD
-var update = __webpack_require__(19)("44a80bbe", content, true, {});
-=======
 var update = __webpack_require__(23)("44a80bbe", content, true, {});
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /***/ }),
 /* 298 */
 /***/ (function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-exports = module.exports = __webpack_require__(18)(false);
-=======
 exports = module.exports = __webpack_require__(22)(false);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 // imports
 
 
@@ -46829,8 +46340,6 @@ function removeBVPO(el) {
 
 /***/ }),
 /* 316 */
-<<<<<<< HEAD
-=======
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46840,7 +46349,6 @@ var ABI = [{ "constant": true, "inputs": [], "name": "lastVerifiedRoot", "output
 
 /***/ }),
 /* 317 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47105,13 +46613,8 @@ module.exports = Array.isArray || function (arr) {
 "use strict";
 
 
-<<<<<<< HEAD
-var format = __webpack_require__(320);
-var EthRPC = __webpack_require__(324);
-=======
 var format = __webpack_require__(321);
 var EthRPC = __webpack_require__(325);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var promiseToCallback = __webpack_require__(62);
 
 module.exports = Eth;
@@ -47231,13 +46734,8 @@ function generateFnFor(rpcMethodName, methodObject) {
 "use strict";
 
 
-<<<<<<< HEAD
-var schema = __webpack_require__(321);
-var util = __webpack_require__(322);
-=======
 var schema = __webpack_require__(322);
 var util = __webpack_require__(323);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var numberToBN = __webpack_require__(29);
 var stripHexPrefix = __webpack_require__(24);
 var padToEven = util.padToEven;
@@ -51154,11 +50652,7 @@ module.exports = {
   };
 })(typeof module === 'undefined' || module, this);
 
-<<<<<<< HEAD
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20)(module)))
-=======
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)(module)))
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /***/ }),
 /* 324 */
@@ -51369,11 +50863,7 @@ function getConstructorFromABI(contractABI) {
 /* 328 */
 /***/ (function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-__webpack_require__(329);
-=======
 __webpack_require__(330);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 module.exports = __webpack_require__(10).Object.assign;
 
 
@@ -51382,11 +50872,7 @@ module.exports = __webpack_require__(10).Object.assign;
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.3.1 Object.assign(target, source)
-<<<<<<< HEAD
-var $export = __webpack_require__(22);
-=======
 var $export = __webpack_require__(20);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 $export($export.S + $export.F, 'Object', { assign: __webpack_require__(330) });
 
@@ -51399,13 +50885,8 @@ $export($export.S + $export.F, 'Object', { assign: __webpack_require__(330) });
 
 // 19.1.2.1 Object.assign(target, source, ...)
 var getKeys = __webpack_require__(46);
-<<<<<<< HEAD
-var gOPS = __webpack_require__(331);
-var pIE = __webpack_require__(332);
-=======
 var gOPS = __webpack_require__(332);
 var pIE = __webpack_require__(333);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var toObject = __webpack_require__(50);
 var IObject = __webpack_require__(69);
 var $assign = Object.assign;
@@ -51458,11 +50939,7 @@ exports.f = {}.propertyIsEnumerable;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 
-<<<<<<< HEAD
-var BN = __webpack_require__(334);
-=======
 var BN = __webpack_require__(335);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var numberToBN = __webpack_require__(29);
 var keccak256 = __webpack_require__(64).keccak_256;
 
@@ -55311,11 +54788,7 @@ module.exports = {
   };
 })(typeof module === 'undefined' || module, this);
 
-<<<<<<< HEAD
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20)(module)))
-=======
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)(module)))
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /***/ }),
 /* 335 */
@@ -55507,11 +54980,7 @@ module.exports = { "default": __webpack_require__(339), __esModule: true };
 /* 339 */
 /***/ (function(module, exports, __webpack_require__) {
 
-<<<<<<< HEAD
-__webpack_require__(340);
-=======
 __webpack_require__(341);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 module.exports = __webpack_require__(10).Object.keys;
 
 
@@ -55535,11 +55004,7 @@ __webpack_require__(341)('keys', function () {
 /***/ (function(module, exports, __webpack_require__) {
 
 // most Object methods by ES6 should accept primitives
-<<<<<<< HEAD
-var $export = __webpack_require__(22);
-=======
 var $export = __webpack_require__(20);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var core = __webpack_require__(10);
 var fails = __webpack_require__(36);
 module.exports = function (KEY, exec) {
@@ -55886,15 +55351,9 @@ module.exports = {
 "use strict";
 /* WEBPACK VAR INJECTION */(function(Buffer) {
 
-<<<<<<< HEAD
-var BN = __webpack_require__(346);
-var numberToBN = __webpack_require__(29);
-var keccak256 = __webpack_require__(347).keccak_256;
-=======
 var BN = __webpack_require__(347);
 var numberToBN = __webpack_require__(29);
 var keccak256 = __webpack_require__(348).keccak_256;
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 // from ethereumjs-util
 function stripZeros(aInput) {
@@ -59741,17 +59200,10 @@ module.exports = {
   };
 })(typeof module === 'undefined' || module, this);
 
-<<<<<<< HEAD
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20)(module)))
-
-/***/ }),
-/* 347 */
-=======
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)(module)))
 
 /***/ }),
 /* 348 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process, global) {/**
@@ -60235,11 +59687,7 @@ module.exports = {
 "use strict";
 
 
-<<<<<<< HEAD
-var BN = __webpack_require__(349);
-=======
 var BN = __webpack_require__(350);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var numberToBN = __webpack_require__(29);
 
 var zero = new BN(0);
@@ -63838,9 +63286,6 @@ module.exports = {
   };
 })(typeof module === 'undefined' || module, this);
 
-<<<<<<< HEAD
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20)(module)))
-=======
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)(module)))
 
 /***/ }),
@@ -64320,7 +63765,6 @@ module.exports = {
 }(this));
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(17), __webpack_require__(7)))
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /***/ }),
 /* 352 */
@@ -68232,17 +67676,10 @@ module.exports = {
   };
 })(typeof module === 'undefined' || module, this);
 
-<<<<<<< HEAD
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20)(module)))
-
-/***/ }),
-/* 352 */
-=======
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18)(module)))
 
 /***/ }),
 /* 353 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68469,11 +67906,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5).Buffer))
 
 /***/ }),
-<<<<<<< HEAD
-/* 353 */
-=======
 /* 354 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -68523,11 +67956,7 @@ module.exports = function (eth) {
 };
 
 /***/ }),
-<<<<<<< HEAD
-/* 354 */
-=======
 /* 355 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -71152,24 +70581,13 @@ if (inBrowser && window.Vue) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 355 */
-=======
 /* 356 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_App_vue__ = __webpack_require__(118);
 /* unused harmony namespace reexport */
-<<<<<<< HEAD
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_b38602ae_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(358);
-function injectStyle (ssrContext) {
-  __webpack_require__(356)
-}
-=======
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2cc49bec_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_App_vue__ = __webpack_require__(357);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var normalizeComponent = __webpack_require__(15)
 /* script */
 
@@ -71197,38 +70615,7 @@ var Component = normalizeComponent(
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 356 */
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(357);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(19)("464172c6", content, true, {});
-
-/***/ }),
 /* 357 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(18)(false);
-// imports
-
-
-// module
-exports.push([module.i, "input::placeholder{color:#d3d3d3!important;font-style:italic!important}", ""]);
-
-// exports
-
-
-/***/ }),
-/* 358 */
-=======
-/* 357 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -71238,25 +70625,15 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
 
 /***/ }),
-<<<<<<< HEAD
-/* 359 */
-=======
 /* 358 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Login_vue__ = __webpack_require__(119);
 /* unused harmony namespace reexport */
-<<<<<<< HEAD
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0965c414_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__ = __webpack_require__(392);
-function injectStyle (ssrContext) {
-  __webpack_require__(360)
-=======
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3b2eae0e_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__ = __webpack_require__(391);
 function injectStyle (ssrContext) {
   __webpack_require__(359)
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 }
 var normalizeComponent = __webpack_require__(15)
 /* script */
@@ -71274,11 +70651,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Login_vue__["a" /* default */],
-<<<<<<< HEAD
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_0965c414_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__["a" /* default */],
-=======
   __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3b2eae0e_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__["a" /* default */],
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -71289,29 +70662,12 @@ var Component = normalizeComponent(
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 360 */
-=======
 /* 359 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-<<<<<<< HEAD
-var content = __webpack_require__(361);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(19)("12e76434", content, true, {});
-
-/***/ }),
-/* 361 */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(18)(false);
-=======
 var content = __webpack_require__(360);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
@@ -71323,7 +70679,6 @@ var update = __webpack_require__(23)("34a78972", content, true, {});
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(22)(false);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 // imports
 
 
@@ -71334,21 +70689,13 @@ exports.push([module.i, "#login{font-family:Avenir,Helvetica,Arial,sans-serif;-w
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 362 */
-=======
 /* 361 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports) {
 
 module.exports = {"_from":"elliptic","_id":"elliptic@6.4.1","_inBundle":false,"_integrity":"sha512-BsXLz5sqX8OHcsh7CqBMztyXARmGQ3LWPtGjJi6DiJHq5C/qvi9P3OqgswKSDftbu8+IoI/QDTAm2fFnQ9SZSQ==","_location":"/elliptic","_phantomChildren":{},"_requested":{"type":"tag","registry":true,"raw":"elliptic","name":"elliptic","escapedName":"elliptic","rawSpec":"","saveSpec":null,"fetchSpec":"latest"},"_requiredBy":["#USER","/"],"_resolved":"https://registry.npmjs.org/elliptic/-/elliptic-6.4.1.tgz","_shasum":"c2d0b7776911b86722c632c3c06c60f2f819939a","_spec":"elliptic","_where":"/Users/alexvlasov/MatterInc/RustySNARKs/plasma/contracts/lib","author":{"name":"Fedor Indutny","email":"fedor@indutny.com"},"bugs":{"url":"https://github.com/indutny/elliptic/issues"},"bundleDependencies":false,"dependencies":{"bn.js":"^4.4.0","brorand":"^1.0.1","hash.js":"^1.0.0","hmac-drbg":"^1.0.0","inherits":"^2.0.1","minimalistic-assert":"^1.0.0","minimalistic-crypto-utils":"^1.0.0"},"deprecated":false,"description":"EC cryptography","devDependencies":{"brfs":"^1.4.3","coveralls":"^2.11.3","grunt":"^0.4.5","grunt-browserify":"^5.0.0","grunt-cli":"^1.2.0","grunt-contrib-connect":"^1.0.0","grunt-contrib-copy":"^1.0.0","grunt-contrib-uglify":"^1.0.1","grunt-mocha-istanbul":"^3.0.1","grunt-saucelabs":"^8.6.2","istanbul":"^0.4.2","jscs":"^2.9.0","jshint":"^2.6.0","mocha":"^2.1.0"},"files":["lib"],"homepage":"https://github.com/indutny/elliptic","keywords":["EC","Elliptic","curve","Cryptography"],"license":"MIT","main":"lib/elliptic.js","name":"elliptic","repository":{"type":"git","url":"git+ssh://git@github.com/indutny/elliptic.git"},"scripts":{"jscs":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","jshint":"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js","lint":"npm run jscs && npm run jshint","test":"npm run lint && npm run unit","unit":"istanbul test _mocha --reporter=spec test/index.js","version":"grunt dist && git add dist/"},"version":"6.4.1"}
 
 /***/ }),
-<<<<<<< HEAD
-/* 363 */
-=======
 /* 362 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71356,11 +70703,7 @@ module.exports = {"_from":"elliptic","_id":"elliptic@6.4.1","_inBundle":false,"_
 
 var utils = exports;
 var BN = __webpack_require__(13);
-<<<<<<< HEAD
-var minAssert = __webpack_require__(21);
-=======
 var minAssert = __webpack_require__(19);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var minUtils = __webpack_require__(122);
 
 utils.assert = minAssert;
@@ -71479,21 +70822,13 @@ utils.intFromLE = intFromLE;
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 364 */
-=======
 /* 363 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-<<<<<<< HEAD
-/* 365 */
-=======
 /* 364 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 var r;
@@ -71551,11 +70886,7 @@ if (typeof self === 'object') {
 } else {
   // Node.js or Web worker with no crypto support
   try {
-<<<<<<< HEAD
-    var crypto = __webpack_require__(366);
-=======
     var crypto = __webpack_require__(365);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
     if (typeof crypto.randomBytes !== 'function')
       throw new Error('Not supported');
 
@@ -71568,21 +70899,13 @@ if (typeof self === 'object') {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 366 */
-=======
 /* 365 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-<<<<<<< HEAD
-/* 367 */
-=======
 /* 366 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -71964,11 +71287,7 @@ BasePoint.prototype.dblp = function dblp(k) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 368 */
-=======
 /* 367 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -72912,11 +72231,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 369 */
-=======
 /* 368 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73103,11 +72418,7 @@ Point.prototype.getX = function getX() {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 370 */
-=======
 /* 369 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73547,11 +72858,7 @@ Point.prototype.mixedAdd = Point.prototype.add;
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 371 */
-=======
 /* 370 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73724,11 +73031,7 @@ defineCurve('ed25519', {
 
 var pre;
 try {
-<<<<<<< HEAD
-  pre = __webpack_require__(378);
-=======
   pre = __webpack_require__(377);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 } catch (e) {
   pre = undefined;
 }
@@ -73767,36 +73070,21 @@ defineCurve('secp256k1', {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 372 */
-=======
 /* 371 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-<<<<<<< HEAD
-exports.sha1 = __webpack_require__(373);
-exports.sha224 = __webpack_require__(374);
-exports.sha256 = __webpack_require__(124);
-exports.sha384 = __webpack_require__(375);
-=======
 exports.sha1 = __webpack_require__(372);
 exports.sha224 = __webpack_require__(373);
 exports.sha256 = __webpack_require__(124);
 exports.sha384 = __webpack_require__(374);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 exports.sha512 = __webpack_require__(125);
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 373 */
-=======
 /* 372 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73877,11 +73165,7 @@ SHA1.prototype._digest = function digest(enc) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 374 */
-=======
 /* 373 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73918,11 +73202,7 @@ SHA224.prototype._digest = function digest(enc) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 375 */
-=======
 /* 374 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -73964,11 +73244,7 @@ SHA384.prototype._digest = function digest(enc) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 376 */
-=======
 /* 375 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -74121,22 +73397,14 @@ var sh = [
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 377 */
-=======
 /* 376 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(14);
-<<<<<<< HEAD
-var assert = __webpack_require__(21);
-=======
 var assert = __webpack_require__(19);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 function Hmac(hash, key, enc) {
   if (!(this instanceof Hmac))
@@ -74183,11 +73451,7 @@ Hmac.prototype.digest = function digest(enc) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 378 */
-=======
 /* 377 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -74973,33 +74237,20 @@ module.exports = {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 379 */
-=======
 /* 378 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var BN = __webpack_require__(13);
-<<<<<<< HEAD
-var HmacDRBG = __webpack_require__(380);
-=======
 var HmacDRBG = __webpack_require__(379);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var elliptic = __webpack_require__(8);
 var utils = elliptic.utils;
 var assert = utils.assert;
 
-<<<<<<< HEAD
-var KeyPair = __webpack_require__(381);
-var Signature = __webpack_require__(382);
-=======
 var KeyPair = __webpack_require__(380);
 var Signature = __webpack_require__(381);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 function EC(options) {
   if (!(this instanceof EC))
@@ -75233,11 +74484,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 380 */
-=======
 /* 379 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75245,11 +74492,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
 
 var hash = __webpack_require__(65);
 var utils = __webpack_require__(122);
-<<<<<<< HEAD
-var assert = __webpack_require__(21);
-=======
 var assert = __webpack_require__(19);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 function HmacDRBG(options) {
   if (!(this instanceof HmacDRBG))
@@ -75361,11 +74604,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 381 */
-=======
 /* 380 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75491,11 +74730,7 @@ KeyPair.prototype.inspect = function inspect() {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 382 */
-=======
 /* 381 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75637,11 +74872,7 @@ Signature.prototype.toDER = function toDER(enc) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 383 */
-=======
 /* 382 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75652,13 +74883,8 @@ var elliptic = __webpack_require__(8);
 var utils = elliptic.utils;
 var assert = utils.assert;
 var parseBytes = utils.parseBytes;
-<<<<<<< HEAD
-var KeyPair = __webpack_require__(384);
-var Signature = __webpack_require__(385);
-=======
 var KeyPair = __webpack_require__(383);
 var Signature = __webpack_require__(384);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 function EDDSA(curve) {
   assert(curve === 'ed25519', 'only tested with ed25519 so far');
@@ -75771,11 +74997,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 384 */
-=======
 /* 383 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75878,11 +75100,7 @@ module.exports = KeyPair;
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 385 */
-=======
 /* 384 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -75955,11 +75173,7 @@ module.exports = Signature;
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 386 */
-=======
 /* 385 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76031,11 +75245,7 @@ function isBuffer(b) {
 // ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-<<<<<<< HEAD
-var util = __webpack_require__(387);
-=======
 var util = __webpack_require__(386);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var hasOwn = Object.prototype.hasOwnProperty;
 var pSlice = Array.prototype.slice;
 var functionsHaveNames = (function () {
@@ -76461,11 +75671,7 @@ var objectKeys = Object.keys || function (obj) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-<<<<<<< HEAD
-/* 387 */
-=======
 /* 386 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -76993,11 +76199,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-<<<<<<< HEAD
-exports.isBuffer = __webpack_require__(388);
-=======
 exports.isBuffer = __webpack_require__(387);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -77041,11 +76243,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-<<<<<<< HEAD
-exports.inherits = __webpack_require__(389);
-=======
 exports.inherits = __webpack_require__(388);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -77066,11 +76264,7 @@ function hasOwnProperty(obj, prop) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(17)))
 
 /***/ }),
-<<<<<<< HEAD
-/* 388 */
-=======
 /* 387 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports) {
 
 module.exports = function isBuffer(arg) {
@@ -77081,11 +76275,7 @@ module.exports = function isBuffer(arg) {
 }
 
 /***/ }),
-<<<<<<< HEAD
-/* 389 */
-=======
 /* 388 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -77114,11 +76304,7 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 390 */
-=======
 /* 389 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -77148,11 +76334,7 @@ if (typeof Object.create === 'function') {
     root = self;
   }
   var COMMON_JS = !root.JS_SHA3_NO_COMMON_JS && typeof module === 'object' && module.exports;
-<<<<<<< HEAD
-  var AMD = "function" === 'function' && __webpack_require__(391);
-=======
   var AMD = "function" === 'function' && __webpack_require__(390);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
   var ARRAY_BUFFER = !root.JS_SHA3_NO_ARRAY_BUFFER && typeof ArrayBuffer !== 'undefined';
   var HEX_CHARS = '0123456789abcdef'.split('');
   var SHAKE_PADDING = [31, 7936, 2031616, 520093696];
@@ -77786,11 +76968,7 @@ if (typeof Object.create === 'function') {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(17), __webpack_require__(7)))
 
 /***/ }),
-<<<<<<< HEAD
-/* 391 */
-=======
 /* 390 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
@@ -77799,11 +76977,7 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ }),
-<<<<<<< HEAD
-/* 392 */
-=======
 /* 391 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -77813,21 +76987,13 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
 
 /***/ }),
-<<<<<<< HEAD
-/* 393 */
-=======
 /* 392 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__ = __webpack_require__(126);
 /* unused harmony namespace reexport */
-<<<<<<< HEAD
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_273f090a_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(415);
-=======
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3aed3688_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(413);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var normalizeComponent = __webpack_require__(15)
 /* script */
 
@@ -77844,11 +77010,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__["a" /* default */],
-<<<<<<< HEAD
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_273f090a_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
-=======
   __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_3aed3688_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -77859,25 +77021,12 @@ var Component = normalizeComponent(
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 394 */
-=======
 /* 393 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-<<<<<<< HEAD
-/* 395 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(396);
-
-/***/ }),
-/* 396 */
-=======
 /* 394 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -77885,7 +77034,6 @@ module.exports = __webpack_require__(395);
 
 /***/ }),
 /* 395 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77893,11 +77041,7 @@ module.exports = __webpack_require__(395);
 
 var utils = __webpack_require__(9);
 var bind = __webpack_require__(128);
-<<<<<<< HEAD
-var Axios = __webpack_require__(398);
-=======
 var Axios = __webpack_require__(397);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var defaults = __webpack_require__(66);
 
 /**
@@ -77932,22 +77076,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(132);
-<<<<<<< HEAD
-axios.CancelToken = __webpack_require__(412);
-=======
 axios.CancelToken = __webpack_require__(411);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 axios.isCancel = __webpack_require__(131);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-<<<<<<< HEAD
-axios.spread = __webpack_require__(413);
-=======
 axios.spread = __webpack_require__(412);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 module.exports = axios;
 
@@ -77956,11 +77092,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 397 */
-=======
 /* 396 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports) {
 
 /*!
@@ -77987,11 +77119,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 398 */
-=======
 /* 397 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77999,13 +77127,8 @@ function isSlowBuffer (obj) {
 
 var defaults = __webpack_require__(66);
 var utils = __webpack_require__(9);
-<<<<<<< HEAD
-var InterceptorManager = __webpack_require__(407);
-var dispatchRequest = __webpack_require__(408);
-=======
 var InterceptorManager = __webpack_require__(406);
 var dispatchRequest = __webpack_require__(407);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /**
  * Create a new instance of Axios
@@ -78082,11 +77205,7 @@ module.exports = Axios;
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 399 */
-=======
 /* 398 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78105,11 +77224,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 400 */
-=======
 /* 399 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78142,11 +77257,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 401 */
-=======
 /* 400 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78174,11 +77285,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 402 */
-=======
 /* 401 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78251,11 +77358,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 403 */
-=======
 /* 402 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78315,11 +77418,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 404 */
-=======
 /* 403 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78394,11 +77493,7 @@ module.exports = (
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 405 */
-=======
 /* 404 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78441,11 +77536,7 @@ module.exports = btoa;
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 406 */
-=======
 /* 405 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78505,11 +77596,7 @@ module.exports = (
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 407 */
-=======
 /* 406 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78568,30 +77655,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 408 */
-=======
 /* 407 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(9);
-<<<<<<< HEAD
-var transformData = __webpack_require__(409);
-var isCancel = __webpack_require__(131);
-var defaults = __webpack_require__(66);
-var isAbsoluteURL = __webpack_require__(410);
-var combineURLs = __webpack_require__(411);
-=======
 var transformData = __webpack_require__(408);
 var isCancel = __webpack_require__(131);
 var defaults = __webpack_require__(66);
 var isAbsoluteURL = __webpack_require__(409);
 var combineURLs = __webpack_require__(410);
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -78673,11 +77748,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 409 */
-=======
 /* 408 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78704,11 +77775,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 410 */
-=======
 /* 409 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78729,11 +77796,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 411 */
-=======
 /* 410 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78754,11 +77817,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 412 */
-=======
 /* 411 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78822,11 +77881,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 413 */
-=======
 /* 412 */
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78860,28 +77915,11 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-<<<<<<< HEAD
-/* 414 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var ABI = [{ "constant": true, "inputs": [], "name": "lastVerifiedRoot", "outputs": [{ "name": "", "type": "bytes32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "newBatchFee", "type": "uint128" }], "name": "changeExitBatchFee", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "operators", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "startNextDepositBatch", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "SPECIAL_ACCOUNT_EXITS", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalDepositRequests", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "exitor", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "balances", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalExitRequests", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "value", "type": "uint256" }], "name": "scaleIntoPlasmaUnitsFromWei", "outputs": [{ "name": "", "type": "uint128" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "blockNumber", "type": "uint32" }, { "name": "proof", "type": "uint256[8]" }], "name": "verifyExitBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "DEPOSIT_BATCH_SIZE", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "cancelDeposit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "MAX_DELAY", "outputs": [{ "name": "", "type": "uint64" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "float", "type": "uint16" }], "name": "parseFloat", "outputs": [{ "name": "scaledValue", "type": "uint128" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "lastCommittedExitBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }, { "name": "", "type": "uint24" }], "name": "depositRequests", "outputs": [{ "name": "amount", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "accoundIDs", "type": "uint24[1]" }, { "name": "blockNumber", "type": "uint32" }, { "name": "newRoot", "type": "bytes32" }], "name": "commitDepositBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }, { "name": "", "type": "uint32" }], "name": "exitAmounts", "outputs": [{ "name": "", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "currentExitBatchFee", "outputs": [{ "name": "", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint32" }], "name": "blocks", "outputs": [{ "name": "circuit", "type": "uint8" }, { "name": "deadline", "type": "uint64" }, { "name": "totalFees", "type": "uint128" }, { "name": "newRoot", "type": "bytes32" }, { "name": "publicDataCommitment", "type": "bytes32" }, { "name": "prover", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "accountID", "type": "uint24" }, { "name": "maxFee", "type": "uint128" }], "name": "depositInto", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "txDataPacked", "type": "bytes" }], "name": "createPublicDataCommitmentForDeposit", "outputs": [{ "name": "h", "type": "bytes32" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "lastVerifiedDepositBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "TRANSFER_BLOCK_SIZE", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "blockNumber", "type": "uint32" }], "name": "withdrawUserBalance", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "stopped", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "accoundIDs", "type": "uint24[1]" }, { "name": "blockNumber", "type": "uint32" }, { "name": "txDataPacked", "type": "bytes" }, { "name": "newRoot", "type": "bytes32" }], "name": "commitExitBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint24" }], "name": "accounts", "outputs": [{ "name": "state", "type": "uint8" }, { "name": "exitBatchNumber", "type": "uint32" }, { "name": "owner", "type": "address" }, { "name": "publicKey", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastCommittedBlockNumber", "outputs": [{ "name": "", "type": "uint32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "ethereumAddressToAccountID", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "publicKey", "type": "uint256[2]" }, { "name": "maxFee", "type": "uint128" }], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "txDataPacked", "type": "bytes" }], "name": "createPublicDataCommitmentForExit", "outputs": [{ "name": "h", "type": "bytes32" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "transactor", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "DENOMINATOR", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "proof", "type": "uint256[8]" }], "name": "verifyTransferBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "accoundIDs", "type": "uint24[1]" }, { "name": "blockNumber", "type": "uint32" }, { "name": "proof", "type": "uint256[8]" }], "name": "verifyDepositBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "exitBatches", "outputs": [{ "name": "state", "type": "uint8" }, { "name": "blockNumber", "type": "uint32" }, { "name": "timestamp", "type": "uint64" }, { "name": "batchFee", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "DEADLINE", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "currentDepositBatchFee", "outputs": [{ "name": "", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "value", "type": "uint128" }], "name": "scaleFromPlasmaUnitsIntoWei", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [{ "name": "publicKey", "type": "uint256[2]" }], "name": "packAndValidatePublicKey", "outputs": [{ "name": "packed", "type": "uint256" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "SPECIAL_ACCOUNT_DEPOSITS", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "totalFees", "type": "uint128" }, { "name": "txDataPacked", "type": "bytes" }], "name": "createPublicDataCommitmentForTransfer", "outputs": [{ "name": "h", "type": "bytes32" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": false, "inputs": [], "name": "exit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [], "name": "lastVerifiedExitBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "nextAccountToRegister", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "totalFees", "type": "uint128" }, { "name": "txDataPacked", "type": "bytes" }, { "name": "newRoot", "type": "bytes32" }], "name": "commitTransferBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "lastVerifiedBlockNumber", "outputs": [{ "name": "", "type": "uint32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "newBatchFee", "type": "uint128" }], "name": "changeDepositBatchFee", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "depositBatches", "outputs": [{ "name": "state", "type": "uint8" }, { "name": "numRequests", "type": "uint24" }, { "name": "blockNumber", "type": "uint32" }, { "name": "timestamp", "type": "uint64" }, { "name": "batchFee", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastCommittedDepositBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "cancelExit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "startNextExitBatch", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "name": "defaultPublicKeys", "type": "uint256[3]" }], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "payable": true, "stateMutability": "payable", "type": "fallback" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "blockNumber", "type": "uint32" }], "name": "BlockCommitted", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "blockNumber", "type": "uint32" }], "name": "BlockVerified", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }, { "indexed": true, "name": "publicKey", "type": "uint256" }, { "indexed": false, "name": "amount", "type": "uint128" }], "name": "LogDepositRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }], "name": "LogCancelDepositRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }], "name": "LogExitRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }], "name": "LogCancelExitRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "ethereumAddress", "type": "address" }, { "indexed": true, "name": "blockNumber", "type": "uint32" }], "name": "LogExit", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "ethereumAddress", "type": "address" }, { "indexed": true, "name": "blockNumber", "type": "uint32" }, { "indexed": false, "name": "accountID", "type": "uint24" }], "name": "LogCompleteExit", "type": "event" }];
-
-/* harmony default export */ __webpack_exports__["a"] = (ABI);
-
-/***/ }),
-/* 415 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('b-navbar',{attrs:{"toggleable":"md","type":"dark","variant":"info"}},[_c('b-container',[_c('b-navbar-toggle',{attrs:{"target":"nav_collapse"}}),_vm._v(" "),_c('b-navbar-brand',[_vm._v("Plasma Wallet")]),_vm._v(" "),_c('b-collapse',{attrs:{"is-nav":"","id":"nav_collapse"}},[_c('b-navbar-nav',[_c('b-nav-item',{attrs:{"href":"#","active":""}},[_vm._v("Account")]),_vm._v(" "),_c('b-nav-item',{attrs:{"href":"#","disabled":""}},[_vm._v("Transactions")])],1),_vm._v(" "),_c('b-navbar-nav',{staticClass:"ml-auto"},[_c('b-nav-item',{attrs:{"right":""}},[_vm._v(_vm._s(_vm.store.account.address))])],1)],1)],1)],1),_vm._v(" "),_c('br'),_vm._v(" "),_c('b-container',{staticClass:"bv-example-row"},[_c('b-alert',{staticClass:"mt-2",attrs:{"show":"","dismissible":"","variant":_vm.alertType,"fade":"","show":_vm.countdown},on:{"dismissed":function($event){_vm.countdown=0}}},[_vm._v("\n            "+_vm._s(_vm.result)+"\n        ")]),_vm._v(" "),_c('b-row',[_c('b-col',{staticClass:"col-xl-8 col-lg-7 col-md-6 col-sm-12",attrs:{"sm":"6","order":"2"}},[_c('b-card',{staticClass:"mb-4 d-flex",attrs:{"title":"Transfer in Plasma"}},[_c('label',{attrs:{"for":"transferToInput"}},[_vm._v("To:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferToInput","type":"text","placeholder":"0xb4aaffeaacb27098d9545a3c0e36924af9eedfe0"},model:{value:(_vm.transferTo),callback:function ($$v) {_vm.transferTo=$$v},expression:"transferTo"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                            (max "),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.transferAmount=_vm.store.account.plasma.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.balance || 0))]),_vm._v(" ETH):\n                    "),_c('b-form-input',{attrs:{"id":"transferAmountInput","placeholder":"7.50","type":"number"},model:{value:(_vm.transferAmount),callback:function ($$v) {_vm.transferAmount=$$v},expression:"transferAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"float-right mt-4",attrs:{"id":"transferBtn"}},[_c('b-btn',{attrs:{"variant":"outline-primary","disabled":!!_vm.transferProblem},on:{"click":_vm.transfer}},[_vm._v("Submit transaction")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"transferBtn","disabled":!_vm.transferProblem,"triggers":"hover"}},[_vm._v("\n                        Transfer not possible: "+_vm._s(_vm.transferProblem)+"\n                    ")])],1)],1),_vm._v(" "),_c('b-col',{staticClass:"col-xl-4 col-lg-5 col-md-6 col-sm-12 mb-5",attrs:{"sm":"6","order":"1"}},[_c('b-card',{attrs:{"title":"Account info"}},[_c('b-card',{staticClass:"mb-3"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Mainchain")])]),_vm._v(" "),_c('label',{attrs:{"for":"addr"}},[_vm._v("Address")]),_vm._v(" \n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.store.account.address,"target":"blanc"}},[_vm._v("block explorer")]),_vm._v("):\n                        "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"addr","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.address),callback:function ($$v) {_vm.$set(_vm.store.account, "address", $$v)},expression:"store.account.address"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"4"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.balance)+" ETH")])],1)],1),_vm._v(" "),_c('b-row',{staticClass:"mb-0 mt-0"},[_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"depositBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.depositModal",modifiers:{"depositModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.depositProblem}},[_vm._v("⇩ Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"depositBtn","disabled":!_vm.depositProblem,"triggers":"hover"}},[_vm._v("\n                                Deposit not possible: "+_vm._s(_vm.depositProblem)+"\n                            ")])],1),_vm._v(" "),_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"withdrawBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.withdrawModal",modifiers:{"withdrawModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.withdrawProblem}},[_vm._v("Withdraw ⇧")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"withdrawBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                                Withdrawal not possible: "+_vm._s(_vm.withdrawProblem)+"\n                            ")])],1)],1),_vm._v(" "),_c('b-card',{staticClass:"mt-2"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Plasma")]),_vm._v("\n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.contractAddress,"target":"blanc"}},[_vm._v("contract")]),_vm._v(")")]),_vm._v(" "),(_vm.store.account.plasma.id===undefined)?_c('img',{attrs:{"src":__webpack_require__(416),"width":"100em"}}):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.id === 0)?_c('div',[_c('p',[_vm._v("No account yet")])]):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.id > 0)?_c('div',[_c('label',{attrs:{"for":"acc_id"}},[_vm._v("Account ID:")]),_vm._v(" "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"acc_id","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.plasma.id),callback:function ($$v) {_vm.$set(_vm.store.account.plasma, "id", $$v)},expression:"store.account.plasma.id"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"6"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.balance || 0)+" ETH")])],1),_vm._v(" "),(_vm.store.account.plasma.pending.balance)?_c('b-row',{staticClass:"mt-2",staticStyle:{"color":"grey"}},[_c('b-col',{attrs:{"cols":"6"}},[_vm._v("Pending:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.pending.balance || 0)+" ETH")])],1):_vm._e(),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"6"}},[_vm._v("Pending nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.pending.nonce))])],1)],1):_vm._e()])],1)],1)],1)],1),_vm._v(" "),_c('b-modal',{ref:"depositModal",attrs:{"id":"depositModal","title":"Deposit","hide-footer":""}},[_c('label',{attrs:{"for":"depositAmountInput"}},[_vm._v("Amount")]),_vm._v(" \n            (max "),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.depositAmount=_vm.store.account.balance}}},[_vm._v(_vm._s(_vm.store.account.balance))]),_vm._v(" ETH):\n        "),_c('b-form-input',{attrs:{"id":"depositAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.depositAmount),callback:function ($$v) {_vm.depositAmount=$$v},expression:"depositAmount"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doDepositBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doDepositProblem},on:{"click":_vm.deposit}},[_vm._v("Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doDepositBtn","disabled":!_vm.doDepositProblem,"triggers":"hover"}},[_vm._v("\n            Deposit not possible: "+_vm._s(_vm.doDepositProblem)+"\n        ")])],1),_vm._v(" "),_c('b-modal',{ref:"withdrawModal",attrs:{"id":"withdrawModal","title":"Withdrawal","hide-footer":""}},[_c('b-tabs',{attrs:{"pills":"","card":""}},[_c('b-tab',{attrs:{"title":"Partial withdrawal","active":""}},[_c('label',{staticClass:"mt-4",attrs:{"for":"withdrawAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                    (max "),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.withdrawAmount=_vm.store.account.plasma.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.balance))]),_vm._v(" ETH):\n                "),_c('b-form-input',{attrs:{"id":"withdrawAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.withdrawAmount),callback:function ($$v) {_vm.withdrawAmount=$$v},expression:"withdrawAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doWithdrawBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doWithdrawProblem},on:{"click":_vm.withdrawSome}},[_vm._v("Withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doWithdrawBtn","disabled":!_vm.doWithdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.doWithdrawProblem)+"\n                ")])],1),_vm._v(" "),_c('b-tab',{staticClass:"mb-4",attrs:{"title":"Full exit"}},[_c('p',[_vm._v("This will close your account and withdraw all money from it")]),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doExitBtn"}},[_c('b-btn',{attrs:{"variant":"danger","disabled":!!_vm.withdrawProblem},on:{"click":_vm.withdrawAll}},[_vm._v("Close & withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doExitBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.withdrawProblem)+"\n                ")])],1)],1)],1)],1)}
-=======
 /* 413 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('b-navbar',{attrs:{"toggleable":"md","type":"dark","variant":"info"}},[_c('b-container',[_c('b-navbar-toggle',{attrs:{"target":"nav_collapse"}}),_vm._v(" "),_c('b-navbar-brand',[_vm._v("Plasma Wallet")]),_vm._v(" "),_c('b-collapse',{attrs:{"is-nav":"","id":"nav_collapse"}},[_c('b-navbar-nav',[_c('b-nav-item',{attrs:{"href":"#","active":""}},[_vm._v("Account")]),_vm._v(" "),_c('b-nav-item',{attrs:{"href":"#","disabled":""}},[_vm._v("Transactions")])],1),_vm._v(" "),_c('b-navbar-nav',{staticClass:"ml-auto"},[_c('b-nav-item',{attrs:{"right":""}},[_vm._v(_vm._s(_vm.store.account.address))])],1)],1)],1)],1),_vm._v(" "),_c('br'),_vm._v(" "),_c('b-container',{staticClass:"bv-example-row"},[_c('b-alert',{staticClass:"mt-2",attrs:{"show":"","dismissible":"","variant":_vm.alertType,"fade":"","show":_vm.countdown},on:{"dismissed":function($event){_vm.countdown=0}}},[_vm._v("\n            "+_vm._s(_vm.result)+"\n        ")]),_vm._v(" "),_c('b-row',[_c('b-col',{staticClass:"col-xl-8 col-lg-7 col-md-6 col-sm-12",attrs:{"sm":"6","order":"2"}},[_c('b-card',{staticClass:"mb-4 d-flex",attrs:{"title":"Transfer in Plasma"}},[_c('label',{attrs:{"for":"transferToInput"}},[_vm._v("To:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferToInput","type":"text","placeholder":"0xb4aaffeaacb27098d9545a3c0e36924af9eedfe0"},model:{value:(_vm.transferTo),callback:function ($$v) {_vm.transferTo=$$v},expression:"transferTo"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                            (max "),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.transferAmount=_vm.store.account.plasma.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.balance || 0))]),_vm._v(" ETH):\n                    "),_c('b-form-input',{attrs:{"id":"transferAmountInput","placeholder":"7.50","type":"number"},model:{value:(_vm.transferAmount),callback:function ($$v) {_vm.transferAmount=$$v},expression:"transferAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"float-right mt-4",attrs:{"id":"transferBtn"}},[_c('b-btn',{attrs:{"variant":"outline-primary","disabled":!!_vm.transferProblem},on:{"click":_vm.transfer}},[_vm._v("Submit transaction")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"transferBtn","disabled":!_vm.transferProblem,"triggers":"hover"}},[_vm._v("\n                        Transfer not possible: "+_vm._s(_vm.transferProblem)+"\n                    ")])],1)],1),_vm._v(" "),_c('b-col',{staticClass:"col-xl-4 col-lg-5 col-md-6 col-sm-12 mb-5",attrs:{"sm":"6","order":"1"}},[_c('b-card',{attrs:{"title":"Account info"}},[_c('b-card',{staticClass:"mb-3"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Mainchain")])]),_vm._v(" "),_c('label',{attrs:{"for":"addr"}},[_vm._v("Address")]),_vm._v(" \n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.store.account.address,"target":"blanc"}},[_vm._v("block explorer")]),_vm._v("):\n                        "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"addr","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.address),callback:function ($$v) {_vm.$set(_vm.store.account, "address", $$v)},expression:"store.account.address"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"4"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.balance)+" ETH")])],1)],1),_vm._v(" "),_c('b-row',{staticClass:"mb-0 mt-0"},[_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"depositBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.depositModal",modifiers:{"depositModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.depositProblem}},[_vm._v("⇩ Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"depositBtn","disabled":!_vm.depositProblem,"triggers":"hover"}},[_vm._v("\n                                Deposit not possible: "+_vm._s(_vm.depositProblem)+"\n                            ")])],1),_vm._v(" "),_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"withdrawBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.withdrawModal",modifiers:{"withdrawModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.withdrawProblem}},[_vm._v("Withdraw ⇧")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"withdrawBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                                Withdrawal not possible: "+_vm._s(_vm.withdrawProblem)+"\n                            ")])],1)],1),_vm._v(" "),_c('b-card',{staticClass:"mt-2"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Plasma")]),_vm._v("\n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.contractAddress,"target":"blanc"}},[_vm._v("contract")]),_vm._v(")")]),_vm._v(" "),_c('label',{attrs:{"for":"acc_id"}},[_vm._v("Account ID:")]),_vm._v(" "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"acc_id","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.plasma.id),callback:function ($$v) {_vm.$set(_vm.store.account.plasma, "id", $$v)},expression:"store.account.plasma.id"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"4"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.balance || 0)+" ETH")])],1),_vm._v(" "),_c('b-row',[_c('b-col',{attrs:{"cols":"4"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.nonce))])],1)],1)],1)],1)],1)],1),_vm._v(" "),_c('b-modal',{ref:"depositModal",attrs:{"id":"depositModal","title":"Deposit","hide-footer":""}},[_c('label',{attrs:{"for":"depositAmountInput"}},[_vm._v("Amount")]),_vm._v(" \n            (max "),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.depositAmount=_vm.store.account.balance}}},[_vm._v(_vm._s(_vm.store.account.balance))]),_vm._v(" ETH):\n        "),_c('b-form-input',{attrs:{"id":"depositAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.depositAmount),callback:function ($$v) {_vm.depositAmount=$$v},expression:"depositAmount"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doDepositBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doDepositProblem},on:{"click":_vm.deposit}},[_vm._v("Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doDepositBtn","disabled":!_vm.doDepositProblem,"triggers":"hover"}},[_vm._v("\n            Deposit not possible: "+_vm._s(_vm.doDepositProblem)+"\n        ")])],1),_vm._v(" "),_c('b-modal',{ref:"withdrawModal",attrs:{"id":"withdrawModal","title":"Withdrawal","hide-footer":""}},[_c('b-tabs',{attrs:{"pills":"","card":""}},[_c('b-tab',{attrs:{"title":"Partial withdrawal","active":""}},[_c('label',{staticClass:"mt-4",attrs:{"for":"withdrawAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                    (max "),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.withdrawAmount=_vm.store.account.plasma.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.balance))]),_vm._v(" ETH):\n                "),_c('b-form-input',{attrs:{"id":"withdrawAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.withdrawAmount),callback:function ($$v) {_vm.withdrawAmount=$$v},expression:"withdrawAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doWithdrawBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doWithdrawProblem},on:{"click":_vm.withdrawSome}},[_vm._v("Withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doWithdrawBtn","disabled":!_vm.doWithdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.doWithdrawProblem)+"\n                ")])],1),_vm._v(" "),_c('b-tab',{staticClass:"mb-4",attrs:{"title":"Full exit"}},[_c('p',[_vm._v("This will close your account and withdraw all money from it")]),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doExitBtn"}},[_c('b-btn',{attrs:{"variant":"danger","disabled":!!_vm.withdrawProblem},on:{"click":_vm.withdrawAll}},[_vm._v("Close & withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doExitBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.withdrawProblem)+"\n                ")])],1)],1)],1)],1)}
->>>>>>> 2ec71db2338243f229efd4fe6bcd6d040305a36a
 var staticRenderFns = []
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
