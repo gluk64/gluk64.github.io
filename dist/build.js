@@ -16039,31 +16039,38 @@ function hasTransactionObject(args) {
     methods: {
         login: function () {
             var _ref = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee() {
-                var account, sig, hash;
+                var accounts, account, sig, hash;
                 return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee$(_context) {
                     while (1) {
                         switch (_context.prev = _context.next) {
                             case 0:
                                 _context.prev = 0;
-                                account = ethereum.selectedAddress || web3.accounts && web3.accounts[0];
+                                _context.next = 3;
+                                return eth.accounts();
+
+                            case 3:
+                                accounts = _context.sent;
+                                account = accounts[0];
+
+                                this.acc = account;
 
                                 if (account) {
-                                    _context.next = 6;
+                                    _context.next = 10;
                                     break;
                                 }
 
-                                _context.next = 5;
+                                _context.next = 9;
                                 return ethereum.enable();
 
-                            case 5:
+                            case 9:
                                 account = ethereum.selectedAddress;
 
-                            case 6:
+                            case 10:
                                 console.log('Logging in with', account);
-                                _context.next = 9;
+                                _context.next = 13;
                                 return eth.personal_sign(__WEBPACK_IMPORTED_MODULE_3_ethjs_util___default.a.fromUtf8(new Buffer('Login to Plasma Wallet')), account);
 
-                            case 9:
+                            case 13:
                                 sig = _context.sent;
 
                                 __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address = account;
@@ -16074,22 +16081,23 @@ function hasTransactionObject(args) {
                                 console.log(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.key);
 
                                 this.$parent.$router.push('/wallet');
-                                _context.next = 20;
+                                _context.next = 25;
                                 break;
 
-                            case 17:
-                                _context.prev = 17;
+                            case 21:
+                                _context.prev = 21;
                                 _context.t0 = _context['catch'](0);
 
                                 // TODO: replace with alert
                                 console.log('Login failed: ', _context.t0);
+                                this.err = _context.t0;
 
-                            case 20:
+                            case 25:
                             case 'end':
                                 return _context.stop();
                         }
                     }
-                }, _callee, this, [[0, 17]]);
+                }, _callee, this, [[0, 21]]);
             }));
 
             function login() {
@@ -18027,32 +18035,49 @@ var baseUrl = 'https://api.plasma-winter.io';
                                 onchain = {};
                                 _context10.prev = 4;
 
-                                newData.address = ethereum.selectedAddress;
-                                _context10.next = 8;
+                                if (!window.ethereum) {
+                                    _context10.next = 9;
+                                    break;
+                                }
+
+                                _context10.t0 = ethereum.selectedAddress;
+                                _context10.next = 12;
+                                break;
+
+                            case 9:
+                                _context10.next = 11;
+                                return eth.accounts();
+
+                            case 11:
+                                _context10.t0 = _context10.sent[0];
+
+                            case 12:
+                                newData.address = _context10.t0;
+                                _context10.next = 15;
                                 return eth.getBalance(newData.address);
 
-                            case 8:
+                            case 15:
                                 balance = _context10.sent.toString(10);
 
                                 newData.balance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](balance), 'ether');
-                                _context10.next = 12;
+                                _context10.next = 19;
                                 return contract.ethereumAddressToAccountID(newData.address);
 
-                            case 12:
+                            case 19:
                                 id = _context10.sent[0].toNumber();
 
 
                                 if (id !== __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id) __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id = null; // display loading.gif
 
-                                _context10.next = 16;
+                                _context10.next = 23;
                                 return contract.accounts(id);
 
-                            case 16:
+                            case 23:
                                 accountState = _context10.sent;
-                                _context10.next = 19;
+                                _context10.next = 26;
                                 return this.loadEvents(newData.address, plasmaData.closing);
 
-                            case 19:
+                            case 26:
                                 _ref11 = _context10.sent;
                                 blocks = _ref11.blocks;
                                 pendingBalance = _ref11.pendingBalance;
@@ -18063,27 +18088,27 @@ var baseUrl = 'https://api.plasma-winter.io';
                                 newData.plasmaId = id;
 
                                 if (!(id > 0)) {
-                                    _context10.next = 29;
+                                    _context10.next = 36;
                                     break;
                                 }
 
-                                _context10.next = 28;
+                                _context10.next = 35;
                                 return this.getPlasmaInfo(id);
 
-                            case 28:
+                            case 35:
                                 plasmaData = _context10.sent;
 
-                            case 29:
-                                _context10.next = 34;
+                            case 36:
+                                _context10.next = 41;
                                 break;
 
-                            case 31:
-                                _context10.prev = 31;
-                                _context10.t0 = _context10['catch'](4);
+                            case 38:
+                                _context10.prev = 38;
+                                _context10.t1 = _context10['catch'](4);
 
-                                this.alert('Status update failed: ' + _context10.t0);
+                                this.alert('Status update failed: ' + _context10.t1);
 
-                            case 34:
+                            case 41:
                                 if (timer === this.updateTimer) {
                                     // if this handler is still valid
                                     __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address = newData.address;
@@ -18118,12 +18143,12 @@ var baseUrl = 'https://api.plasma-winter.io';
                                     }, 1000);
                                 }
 
-                            case 35:
+                            case 42:
                             case 'end':
                                 return _context10.stop();
                         }
                     }
-                }, _callee10, this, [[4, 31]]);
+                }, _callee10, this, [[4, 38]]);
             }));
 
             function updateAccountInfo() {
@@ -70510,7 +70535,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Login_vue__ = __webpack_require__(120);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_6b24d644_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__ = __webpack_require__(394);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_57cadaf6_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__ = __webpack_require__(394);
 function injectStyle (ssrContext) {
   __webpack_require__(362)
 }
@@ -70530,7 +70555,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Login_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_6b24d644_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_57cadaf6_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -70551,7 +70576,7 @@ var content = __webpack_require__(363);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(16)("2c3c1382", content, true, {});
+var update = __webpack_require__(16)("d3580c56", content, true, {});
 
 /***/ }),
 /* 363 */
@@ -76872,7 +76897,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__ = __webpack_require__(127);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_61edce82_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(419);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_436b76e8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(419);
 function injectStyle (ssrContext) {
   __webpack_require__(396)
 }
@@ -76892,7 +76917,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_61edce82_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_436b76e8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -76913,7 +76938,7 @@ var content = __webpack_require__(397);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(16)("da6483b8", content, true, {});
+var update = __webpack_require__(16)("7e7c99fd", content, true, {});
 
 /***/ }),
 /* 397 */
