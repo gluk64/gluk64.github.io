@@ -12252,7 +12252,7 @@ var store = {
         address: null,
         balance: null,
         onchain: {
-            isClosing: false,
+            //isClosing: false,
             balance: null,
             completeWithdrawArgs: []
         },
@@ -16033,7 +16033,7 @@ function hasTransactionObject(args) {
     name: 'login',
     computed: {
         ethereumSupported: function ethereumSupported() {
-            return typeof window.ethereum !== 'undefined';
+            return typeof window.web3 !== 'undefined';
         }
     },
     methods: {
@@ -16045,7 +16045,7 @@ function hasTransactionObject(args) {
                         switch (_context.prev = _context.next) {
                             case 0:
                                 _context.prev = 0;
-                                account = ethereum.selectedAddress;
+                                account = ethereum.selectedAddress || web3.accounts && web3.accounts[0];
 
                                 if (account) {
                                     _context.next = 6;
@@ -17913,62 +17913,34 @@ var baseUrl = 'https://api.plasma-winter.io';
 
             return getPlasmaInfo;
         }(),
-        updateAccountInfo: function () {
-            var _ref9 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee9() {
-                var _this = this;
-
-                var newData, timer, plasmaData, onchain, balance, id, accountState, isClosing, contractForLogs, partialsFilter, fullFilter, events, completeExitsFilter, completeExitEvents, i, multiplier, finalBalance, nonEmptyBlocks, _i, ev, blockNumber, amount, convertedBlockNumber;
+        loadEvents: function () {
+            var _ref9 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee9(address, closing) {
+                var contractForLogs, partialsFilter, fullFilter, events, completeExitsFilter, completeExitEvents, i, multiplier, finalBalance, nonEmptyBlocks, _i, ev, blockNumber, amount, convertedBlockNumber, pendingBalance;
 
                 return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee9$(_context9) {
                     while (1) {
                         switch (_context9.prev = _context9.next) {
                             case 0:
-                                newData = {};
-                                timer = this.updateTimer;
-                                plasmaData = {};
-                                onchain = {};
-                                _context9.prev = 4;
-
-                                newData.address = ethereum.selectedAddress;
-                                _context9.next = 8;
-                                return eth.getBalance(newData.address);
-
-                            case 8:
-                                balance = _context9.sent.toString(10);
-
-                                newData.balance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](balance), 'ether');
-                                _context9.next = 12;
-                                return contract.ethereumAddressToAccountID(newData.address);
-
-                            case 12:
-                                id = _context9.sent[0].toNumber();
-
-
-                                if (id !== __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id) __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id = null; // display loading.gif
-
-                                _context9.next = 16;
-                                return contract.accounts(id);
-
-                            case 16:
-                                accountState = _context9.sent;
-                                isClosing = accountState.state.toNumber() > 1;
-
-                                onchain.isClosing = true;
-
                                 contractForLogs = new __WEBPACK_IMPORTED_MODULE_5_ethers__["ethers"].Contract(window.contractAddress, __WEBPACK_IMPORTED_MODULE_9__contract__["a" /* default */], window.ethersProvider);
-                                partialsFilter = contractForLogs.filters.LogExit(newData.address, null);
+                                partialsFilter = contractForLogs.filters.LogExit(address, null);
                                 fullFilter = {
                                     fromBlock: 1,
                                     toBlock: 'latest',
                                     address: partialsFilter.address,
                                     topics: partialsFilter.topics
                                 };
-                                _context9.next = 24;
+                                _context9.next = 5;
                                 return ethersProvider.getLogs(fullFilter);
 
-                            case 24:
+                            case 5:
                                 events = _context9.sent;
-                                completeExitsFilter = contractForLogs.filters.LogCompleteExit(newData.address, null);
+
+                                if (!closing) {
+                                    _context9.next = 13;
+                                    break;
+                                }
+
+                                completeExitsFilter = contractForLogs.filters.LogCompleteExit(address, null);
 
 
                                 fullFilter = {
@@ -17978,10 +17950,10 @@ var baseUrl = 'https://api.plasma-winter.io';
                                     topics: completeExitsFilter.topics
                                 };
 
-                                _context9.next = 29;
+                                _context9.next = 11;
                                 return ethersProvider.getLogs(fullFilter);
 
-                            case 29:
+                            case 11:
                                 completeExitEvents = _context9.sent;
 
 
@@ -17989,23 +17961,24 @@ var baseUrl = 'https://api.plasma-winter.io';
                                     events.push(completeExitEvents[i]);
                                 }
 
+                            case 13:
                                 multiplier = new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]('1000000000000');
                                 finalBalance = new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](0);
                                 nonEmptyBlocks = [];
                                 _i = 0;
 
-                            case 35:
+                            case 17:
                                 if (!(_i < events.length)) {
-                                    _context9.next = 45;
+                                    _context9.next = 27;
                                     break;
                                 }
 
                                 ev = events[_i];
                                 blockNumber = __WEBPACK_IMPORTED_MODULE_5_ethers__["ethers"].utils.bigNumberify(ev.topics[2]);
-                                _context9.next = 40;
-                                return contract.exitAmounts(newData.address, blockNumber);
+                                _context9.next = 22;
+                                return contract.exitAmounts(address, blockNumber);
 
-                            case 40:
+                            case 22:
                                 amount = _context9.sent[0];
 
                                 if (!amount.eq(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](0))) {
@@ -18015,40 +17988,102 @@ var baseUrl = 'https://api.plasma-winter.io';
                                     finalBalance = finalBalance.add(amount);
                                 }
 
-                            case 42:
+                            case 24:
                                 _i++;
-                                _context9.next = 35;
+                                _context9.next = 17;
                                 break;
 
-                            case 45:
+                            case 27:
+                                pendingBalance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(finalBalance.mul(multiplier), 'ether');
+                                return _context9.abrupt('return', { blocks: nonEmptyBlocks, pendingBalance: pendingBalance });
 
-                                onchain.balance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(finalBalance.mul(multiplier), 'ether');
-                                onchain.completeWithdrawArgs = nonEmptyBlocks;
+                            case 29:
+                            case 'end':
+                                return _context9.stop();
+                        }
+                    }
+                }, _callee9, this);
+            }));
+
+            function loadEvents(_x4, _x5) {
+                return _ref9.apply(this, arguments);
+            }
+
+            return loadEvents;
+        }(),
+        updateAccountInfo: function () {
+            var _ref10 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee10() {
+                var _this = this;
+
+                var newData, timer, plasmaData, onchain, balance, id, accountState, _ref11, blocks, pendingBalance;
+
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee10$(_context10) {
+                    while (1) {
+                        switch (_context10.prev = _context10.next) {
+                            case 0:
+                                newData = {};
+                                timer = this.updateTimer;
+                                plasmaData = {};
+                                onchain = {};
+                                _context10.prev = 4;
+
+                                newData.address = ethereum.selectedAddress;
+                                _context10.next = 8;
+                                return eth.getBalance(newData.address);
+
+                            case 8:
+                                balance = _context10.sent.toString(10);
+
+                                newData.balance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](balance), 'ether');
+                                _context10.next = 12;
+                                return contract.ethereumAddressToAccountID(newData.address);
+
+                            case 12:
+                                id = _context10.sent[0].toNumber();
+
+
+                                if (id !== __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id) __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id = null; // display loading.gif
+
+                                _context10.next = 16;
+                                return contract.accounts(id);
+
+                            case 16:
+                                accountState = _context10.sent;
+                                _context10.next = 19;
+                                return this.loadEvents(newData.address, plasmaData.closing);
+
+                            case 19:
+                                _ref11 = _context10.sent;
+                                blocks = _ref11.blocks;
+                                pendingBalance = _ref11.pendingBalance;
+
+                                onchain.completeWithdrawArgs = blocks;
+                                onchain.balance = pendingBalance;
 
                                 newData.plasmaId = id;
 
                                 if (!(id > 0)) {
-                                    _context9.next = 52;
+                                    _context10.next = 29;
                                     break;
                                 }
 
-                                _context9.next = 51;
+                                _context10.next = 28;
                                 return this.getPlasmaInfo(id);
 
-                            case 51:
-                                plasmaData = _context9.sent;
+                            case 28:
+                                plasmaData = _context10.sent;
 
-                            case 52:
-                                _context9.next = 57;
+                            case 29:
+                                _context10.next = 34;
                                 break;
 
-                            case 54:
-                                _context9.prev = 54;
-                                _context9.t0 = _context9['catch'](4);
+                            case 31:
+                                _context10.prev = 31;
+                                _context10.t0 = _context10['catch'](4);
 
-                                this.alert('Status update failed: ' + _context9.t0);
+                                this.alert('Status update failed: ' + _context10.t0);
 
-                            case 57:
+                            case 34:
                                 if (timer === this.updateTimer) {
                                     // if this handler is still valid
                                     __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address = newData.address;
@@ -18083,16 +18118,16 @@ var baseUrl = 'https://api.plasma-winter.io';
                                     }, 1000);
                                 }
 
-                            case 58:
+                            case 35:
                             case 'end':
-                                return _context9.stop();
+                                return _context10.stop();
                         }
                     }
-                }, _callee9, this, [[4, 54]]);
+                }, _callee10, this, [[4, 31]]);
             }));
 
             function updateAccountInfo() {
-                return _ref9.apply(this, arguments);
+                return _ref10.apply(this, arguments);
             }
 
             return updateAccountInfo;
@@ -21876,7 +21911,7 @@ window.app = new __WEBPACK_IMPORTED_MODULE_2_vue__["a" /* default */]({
                     switch (_context.prev = _context.next) {
                         case 0:
                             // read store.account from local storage?
-                            if (typeof window.ethereum !== 'undefined') {
+                            if (typeof window.web3 !== 'undefined') {
                                 window.eth = new __WEBPACK_IMPORTED_MODULE_7_ethjs___default.a(web3.currentProvider);
                                 window.ethersProvider = new __WEBPACK_IMPORTED_MODULE_8_ethers__["ethers"].providers.Web3Provider(web3.currentProvider);
                             }
@@ -70475,7 +70510,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Login_vue__ = __webpack_require__(120);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_77fa85c0_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__ = __webpack_require__(394);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_6b24d644_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__ = __webpack_require__(394);
 function injectStyle (ssrContext) {
   __webpack_require__(362)
 }
@@ -70495,7 +70530,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Login_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_77fa85c0_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_6b24d644_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Login_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -70516,7 +70551,7 @@ var content = __webpack_require__(363);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(16)("bd4171c6", content, true, {});
+var update = __webpack_require__(16)("2c3c1382", content, true, {});
 
 /***/ }),
 /* 363 */
@@ -76825,7 +76860,7 @@ module.exports = __webpack_amd_options__;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('b-container',{attrs:{"id":"login"}},[_c('b-jumbotron',{attrs:{"bg-variant":"light","border-variant":"dark"}},[_c('template',{slot:"header"},[_vm._v("\n        Plasma Wallet\n    ")]),_vm._v(" "),_c('template',{slot:"lead"},[_vm._v("\n        Plasma on SNARKs has arrived\n    ")]),_vm._v(" "),_c('hr',{staticClass:"my-4"}),_vm._v(" "),(_vm.ethereumSupported)?_c('b-btn',{attrs:{"variant":"success","size":"lg"},on:{"click":_vm.login}},[_vm._v("Login with Metamask")]):_c('p',{staticStyle:{"color":"red"}},[_vm._v("Ethereum support is not detected. Please use an Ethereum-compatible browser, e.g. install "),_c('a',{attrs:{"href":"https://metamask.io"}},[_vm._v("Metamask")]),_vm._v(".")])],2)],1)}
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('b-container',{attrs:{"id":"login"}},[_c('b-jumbotron',{attrs:{"bg-variant":"light","border-variant":"dark"}},[_c('template',{slot:"header"},[_vm._v("\n        Plasma Wallet "),_c('span',{staticStyle:{"font-size":"0.3em"}},[_c('strong',[_vm._v("ALPHA")])])]),_vm._v(" "),_c('template',{slot:"lead"},[_vm._v("\n        Plasma on SNARKs has arrived\n    ")]),_vm._v(" "),_c('hr',{staticClass:"my-4"}),_vm._v(" "),(_vm.ethereumSupported)?_c('b-btn',{attrs:{"variant":"success","size":"lg"},on:{"click":_vm.login}},[_vm._v("Login with Metamask")]):_c('p',{staticStyle:{"color":"red"}},[_vm._v("Ethereum support is not detected. Please use an Ethereum-compatible browser, e.g. install "),_c('a',{attrs:{"href":"https://metamask.io"}},[_vm._v("Metamask")]),_vm._v(".")])],2)],1)}
 var staticRenderFns = []
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
@@ -76837,7 +76872,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__ = __webpack_require__(127);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_571f031e_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(419);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_61edce82_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(419);
 function injectStyle (ssrContext) {
   __webpack_require__(396)
 }
@@ -76857,7 +76892,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_571f031e_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_61edce82_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -76878,7 +76913,7 @@ var content = __webpack_require__(397);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(16)("0fd4510c", content, true, {});
+var update = __webpack_require__(16)("da6483b8", content, true, {});
 
 /***/ }),
 /* 397 */
@@ -77802,7 +77837,7 @@ var ABI = [{ "constant": true, "inputs": [], "name": "lastVerifiedRoot", "output
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('b-navbar',{attrs:{"toggleable":"md","type":"dark","variant":"info"}},[_c('b-container',[_c('b-navbar-toggle',{attrs:{"target":"nav_collapse"}}),_vm._v(" "),_c('b-navbar-brand',[_vm._v("Plasma Wallet")]),_vm._v(" "),_c('b-collapse',{attrs:{"is-nav":"","id":"nav_collapse"}},[_c('b-navbar-nav',[_c('b-nav-item',{attrs:{"href":"#","active":""}},[_vm._v("Account")]),_vm._v(" "),_c('b-nav-item',{attrs:{"href":"#","disabled":""}},[_vm._v("Transactions")])],1),_vm._v(" "),_c('b-navbar-nav',{staticClass:"ml-auto"},[_c('b-nav-item',{attrs:{"right":""}},[_vm._v(_vm._s(_vm.store.account.address))])],1)],1)],1)],1),_vm._v(" "),_c('br'),_vm._v(" "),_c('b-container',{staticClass:"bv-example-row"},[_c('b-alert',{staticClass:"mt-2",attrs:{"show":"","dismissible":"","variant":_vm.alertType,"fade":"","show":_vm.countdown},on:{"dismissed":function($event){_vm.countdown=0}}},[_vm._v("\n            "+_vm._s(_vm.result)+"\n        ")]),_vm._v(" "),_c('b-row',[_c('b-col',{staticClass:"col-xl-8 col-lg-7 col-md-6 col-sm-12",attrs:{"sm":"6","order":"2"}},[_c('b-card',{staticClass:"mb-4 d-flex",attrs:{"title":"Transfer in Plasma"}},[_c('label',{attrs:{"for":"transferToInput"}},[_vm._v("To:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferToInput","type":"text","placeholder":"0xb4aaffeaacb27098d9545a3c0e36924af9eedfe0"},model:{value:(_vm.transferTo),callback:function ($$v) {_vm.transferTo=$$v},expression:"transferTo"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                            (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.transferAmount=_vm.store.account.plasma.committed.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.committed.balance || 0))]),_vm._v("):\n                    "),_c('b-form-input',{attrs:{"id":"transferAmountInput","placeholder":"7.50","type":"number"},model:{value:(_vm.transferAmount),callback:function ($$v) {_vm.transferAmount=$$v},expression:"transferAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"float-right",attrs:{"id":"transferBtn"}},[(_vm.transferPending)?_c('img',{staticStyle:{"margin-right":"1.5em"},attrs:{"src":__webpack_require__(134),"width":"100em"}}):_c('b-btn',{staticClass:"mt-4",attrs:{"variant":"outline-primary","disabled":!!_vm.transferProblem},on:{"click":_vm.transfer}},[_vm._v("Submit transaction")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"transferBtn","disabled":_vm.transferPending || !_vm.transferProblem,"triggers":"hover"}},[_vm._v("\n                        Transfer not possible: "+_vm._s(_vm.transferProblem)+"\n                    ")])],1)],1),_vm._v(" "),_c('b-col',{staticClass:"col-xl-4 col-lg-5 col-md-6 col-sm-12 mb-5",attrs:{"sm":"6","order":"1"}},[_c('b-card',{attrs:{"title":"Account info"}},[_c('b-card',{staticClass:"mb-3"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Mainchain")])]),_vm._v(" "),_c('label',{attrs:{"for":"addr"}},[_vm._v("Address")]),_vm._v(" \n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.store.account.address,"target":"blanc"}},[_vm._v("block explorer")]),_vm._v("):\n                        "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"addr","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.address),callback:function ($$v) {_vm.$set(_vm.store.account, "address", $$v)},expression:"store.account.address"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"6"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.balance))])],1),_vm._v(" "),(_vm.pendingWithdraw)?_c('b-row',{staticClass:"mt-2",staticStyle:{"color":"grey"}},[_c('b-col',{attrs:{"cols":"6"}},[_vm._v("Pending:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.onchain.balance))])],1):_vm._e(),_vm._v(" "),(_vm.pendingWithdraw)?_c('b-row',{staticClass:"mt-2 mx-auto"},[_c('b-btn',{staticClass:"mt-2 mx-auto",attrs:{"variant":"primary"},on:{"click":_vm.completeWithdraw}},[_vm._v("Complete withdrawal")])],1):_vm._e()],1),_vm._v(" "),_c('b-row',{staticClass:"mb-0 mt-0"},[_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"depositBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.depositModal",modifiers:{"depositModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.depositProblem}},[_vm._v("⇩ Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"depositBtn","disabled":!_vm.depositProblem,"triggers":"hover"}},[_vm._v("\n                                Deposit not possible: "+_vm._s(_vm.depositProblem)+"\n                            ")])],1),_vm._v(" "),_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"withdrawBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.withdrawModal",modifiers:{"withdrawModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.withdrawProblem}},[_vm._v("Withdraw ⇧")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"withdrawBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                                Withdrawal not possible: "+_vm._s(_vm.withdrawProblem)+"\n                            ")])],1)],1),_vm._v(" "),_c('b-card',{staticClass:"mt-2"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Plasma")]),_vm._v("\n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.store.contractAddress,"target":"blanc"}},[_vm._v("contract")]),_vm._v(")")]),_vm._v(" "),(_vm.store.account.plasma.id === null)?_c('img',{attrs:{"src":__webpack_require__(134),"width":"100em"}}):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.id === 0)?_c('div',[_c('p',[_vm._v("No account yet.")])]):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.closing)?_c('div',[_c('p',[_vm._v("Closing account: please complete pending withdrawal.")])]):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.id > 0 && !_vm.store.account.plasma.closing)?_c('div',[_c('label',{attrs:{"for":"acc_id"}},[_vm._v("Account ID:")]),_vm._v(" "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"acc_id","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.plasma.id),callback:function ($$v) {_vm.$set(_vm.store.account.plasma, "id", $$v)},expression:"store.account.plasma.id"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Verified balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.plasma.verified.balance || 0))])],1),_vm._v(" "),(_vm.store.account.plasma.verified.balance != _vm.store.account.plasma.committed.balance)?_c('b-row',{staticClass:"mt-2",staticStyle:{"color":"grey"}},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Pending balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.plasma.committed.balance || 0))])],1):_vm._e(),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Latest nonce:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.plasma.committed.nonce || 0))])],1),_vm._v(" "),(_vm.store.account.plasma.pending.nonce !== _vm.store.account.plasma.committed.nonce)?_c('b-row',{staticClass:"mt-2",staticStyle:{"color":"grey"}},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Next nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.pending.nonce || _vm.store.account.plasma.committed.nonce || 0))])],1):_vm._e()],1):_vm._e()])],1)],1)],1)],1),_vm._v(" "),_c('b-modal',{ref:"depositModal",attrs:{"id":"depositModal","title":"Deposit","hide-footer":""}},[_c('label',{attrs:{"for":"depositAmountInput"}},[_vm._v("Amount")]),_vm._v(" \n            (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.depositAmount=_vm.store.account.balance}}},[_vm._v(_vm._s(_vm.store.account.balance))]),_vm._v("):\n        "),_c('b-form-input',{attrs:{"id":"depositAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.depositAmount),callback:function ($$v) {_vm.depositAmount=$$v},expression:"depositAmount"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doDepositBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doDepositProblem},on:{"click":_vm.deposit}},[_vm._v("Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doDepositBtn","disabled":!_vm.doDepositProblem,"triggers":"hover"}},[_vm._v("\n            Deposit not possible: "+_vm._s(_vm.doDepositProblem)+"\n        ")])],1),_vm._v(" "),_c('b-modal',{ref:"withdrawModal",attrs:{"id":"withdrawModal","title":"Withdrawal","hide-footer":""}},[_c('b-tabs',{attrs:{"pills":"","card":""}},[_c('b-tab',{attrs:{"title":"Partial withdrawal","active":""}},[_c('label',{staticClass:"mt-4",attrs:{"for":"withdrawAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                    (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.withdrawAmount=_vm.store.account.plasma.verified.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.verified.balance))]),_vm._v("):\n                "),_c('b-form-input',{attrs:{"id":"withdrawAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.withdrawAmount),callback:function ($$v) {_vm.withdrawAmount=$$v},expression:"withdrawAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doWithdrawBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doWithdrawProblem},on:{"click":_vm.withdrawSome}},[_vm._v("Withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doWithdrawBtn","disabled":!_vm.doWithdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.doWithdrawProblem)+"\n                ")])],1),_vm._v(" "),_c('b-tab',{staticClass:"mb-4",attrs:{"title":"Full exit"}},[_c('p',[_vm._v("This will close your account and withdraw all money from it.")]),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doExitBtn"}},[_c('b-btn',{attrs:{"variant":"danger","disabled":!!_vm.withdrawProblem},on:{"click":_vm.withdrawAll}},[_vm._v("Close & withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doExitBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.withdrawProblem)+"\n                ")])],1)],1)],1)],1)}
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('b-navbar',{attrs:{"toggleable":"md","type":"dark","variant":"info"}},[_c('b-container',[_c('b-navbar-toggle',{attrs:{"target":"nav_collapse"}}),_vm._v(" "),_c('b-navbar-brand',[_vm._v("Plasma Wallet "),_c('span',{staticStyle:{"font-size":"0.4em"}},[_vm._v("ALPHA")])]),_vm._v(" "),_c('b-collapse',{attrs:{"is-nav":"","id":"nav_collapse"}},[_c('b-navbar-nav',[_c('b-nav-item',{attrs:{"href":"#","active":""}},[_vm._v("Account")]),_vm._v(" "),_c('b-nav-item',{attrs:{"href":"#","disabled":""}},[_vm._v("Transactions")])],1),_vm._v(" "),_c('b-navbar-nav',{staticClass:"ml-auto"},[_c('b-nav-item',{attrs:{"right":""}},[_vm._v(_vm._s(_vm.store.account.address))])],1)],1)],1)],1),_vm._v(" "),_c('br'),_vm._v(" "),_c('b-container',{staticClass:"bv-example-row"},[_c('b-alert',{staticClass:"mt-2",attrs:{"show":"","dismissible":"","variant":_vm.alertType,"fade":"","show":_vm.countdown},on:{"dismissed":function($event){_vm.countdown=0}}},[_vm._v("\n            "+_vm._s(_vm.result)+"\n        ")]),_vm._v(" "),_c('b-row',[_c('b-col',{staticClass:"col-xl-8 col-lg-7 col-md-6 col-sm-12",attrs:{"sm":"6","order":"2"}},[_c('b-card',{staticClass:"mb-4 d-flex",attrs:{"title":"Transfer in Plasma"}},[_c('label',{attrs:{"for":"transferToInput"}},[_vm._v("To:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferToInput","type":"text","placeholder":"0xb4aaffeaacb27098d9545a3c0e36924af9eedfe0"},model:{value:(_vm.transferTo),callback:function ($$v) {_vm.transferTo=$$v},expression:"transferTo"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                            (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.transferAmount=_vm.store.account.plasma.committed.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.committed.balance || 0))]),_vm._v("):\n                    "),_c('b-form-input',{attrs:{"id":"transferAmountInput","placeholder":"7.50","type":"number"},model:{value:(_vm.transferAmount),callback:function ($$v) {_vm.transferAmount=$$v},expression:"transferAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"float-right",attrs:{"id":"transferBtn"}},[(_vm.transferPending)?_c('img',{staticStyle:{"margin-right":"1.5em"},attrs:{"src":__webpack_require__(134),"width":"100em"}}):_c('b-btn',{staticClass:"mt-4",attrs:{"variant":"outline-primary","disabled":!!_vm.transferProblem},on:{"click":_vm.transfer}},[_vm._v("Submit transaction")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"transferBtn","disabled":_vm.transferPending || !_vm.transferProblem,"triggers":"hover"}},[_vm._v("\n                        Transfer not possible: "+_vm._s(_vm.transferProblem)+"\n                    ")])],1)],1),_vm._v(" "),_c('b-col',{staticClass:"col-xl-4 col-lg-5 col-md-6 col-sm-12 mb-5",attrs:{"sm":"6","order":"1"}},[_c('b-card',{attrs:{"title":"Account info"}},[_c('b-card',{staticClass:"mb-3"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Mainchain")])]),_vm._v(" "),_c('label',{attrs:{"for":"addr"}},[_vm._v("Address")]),_vm._v(" \n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.store.account.address,"target":"blanc"}},[_vm._v("block explorer")]),_vm._v("):\n                        "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"addr","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.address),callback:function ($$v) {_vm.$set(_vm.store.account, "address", $$v)},expression:"store.account.address"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"6"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.balance))])],1),_vm._v(" "),(_vm.pendingWithdraw)?_c('b-row',{staticClass:"mt-2",staticStyle:{"color":"grey"}},[_c('b-col',{attrs:{"cols":"6"}},[_vm._v("Pending:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.onchain.balance))])],1):_vm._e(),_vm._v(" "),(_vm.pendingWithdraw)?_c('b-row',{staticClass:"mt-2 mx-auto"},[_c('b-btn',{staticClass:"mt-2 mx-auto",attrs:{"variant":"primary"},on:{"click":_vm.completeWithdraw}},[_vm._v("Complete withdrawal")])],1):_vm._e()],1),_vm._v(" "),_c('b-row',{staticClass:"mb-0 mt-0"},[_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"depositBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.depositModal",modifiers:{"depositModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.depositProblem}},[_vm._v("⇩ Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"depositBtn","disabled":!_vm.depositProblem,"triggers":"hover"}},[_vm._v("\n                                Deposit not possible: "+_vm._s(_vm.depositProblem)+"\n                            ")])],1),_vm._v(" "),_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"withdrawBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.withdrawModal",modifiers:{"withdrawModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.withdrawProblem}},[_vm._v("Withdraw ⇧")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"withdrawBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                                Withdrawal not possible: "+_vm._s(_vm.withdrawProblem)+"\n                            ")])],1)],1),_vm._v(" "),_c('b-card',{staticClass:"mt-2"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Plasma")]),_vm._v("\n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.store.contractAddress,"target":"blanc"}},[_vm._v("contract")]),_vm._v(")")]),_vm._v(" "),(_vm.store.account.plasma.id === null)?_c('img',{attrs:{"src":__webpack_require__(134),"width":"100em"}}):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.id === 0)?_c('div',[_c('p',[_vm._v("No account yet.")])]):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.id > 0 && _vm.store.account.plasma.closing)?_c('div',[_c('p',[_vm._v("Closing account #"+_vm._s(_vm.store.account.plasma.id)+": please complete pending withdrawal.")])]):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.id > 0 && !_vm.store.account.plasma.closing)?_c('div',[_c('label',{attrs:{"for":"acc_id"}},[_vm._v("Account ID:")]),_vm._v(" "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"acc_id","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.plasma.id),callback:function ($$v) {_vm.$set(_vm.store.account.plasma, "id", $$v)},expression:"store.account.plasma.id"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Verified balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.plasma.verified.balance || 0))])],1),_vm._v(" "),(_vm.store.account.plasma.verified.balance != _vm.store.account.plasma.committed.balance)?_c('b-row',{staticClass:"mt-2",staticStyle:{"color":"grey"}},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Pending balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.plasma.committed.balance || 0))])],1):_vm._e(),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Latest nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.committed.nonce || 0))])],1),_vm._v(" "),(_vm.store.account.plasma.pending.nonce !== _vm.store.account.plasma.committed.nonce)?_c('b-row',{staticClass:"mt-2",staticStyle:{"color":"grey"}},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Next nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.pending.nonce || _vm.store.account.plasma.committed.nonce || 0))])],1):_vm._e()],1):_vm._e()])],1)],1)],1)],1),_vm._v(" "),_c('b-modal',{ref:"depositModal",attrs:{"id":"depositModal","title":"Deposit","hide-footer":""}},[_c('label',{attrs:{"for":"depositAmountInput"}},[_vm._v("Amount")]),_vm._v(" \n            (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.depositAmount=_vm.store.account.balance}}},[_vm._v(_vm._s(_vm.store.account.balance))]),_vm._v("):\n        "),_c('b-form-input',{attrs:{"id":"depositAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.depositAmount),callback:function ($$v) {_vm.depositAmount=$$v},expression:"depositAmount"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doDepositBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doDepositProblem},on:{"click":_vm.deposit}},[_vm._v("Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doDepositBtn","disabled":!_vm.doDepositProblem,"triggers":"hover"}},[_vm._v("\n            Deposit not possible: "+_vm._s(_vm.doDepositProblem)+"\n        ")])],1),_vm._v(" "),_c('b-modal',{ref:"withdrawModal",attrs:{"id":"withdrawModal","title":"Withdrawal","hide-footer":""}},[_c('b-tabs',{attrs:{"pills":"","card":""}},[_c('b-tab',{attrs:{"title":"Partial withdrawal","active":""}},[_c('label',{staticClass:"mt-4",attrs:{"for":"withdrawAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                    (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.withdrawAmount=_vm.store.account.plasma.verified.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.verified.balance))]),_vm._v("):\n                "),_c('b-form-input',{attrs:{"id":"withdrawAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.withdrawAmount),callback:function ($$v) {_vm.withdrawAmount=$$v},expression:"withdrawAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doWithdrawBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doWithdrawProblem},on:{"click":_vm.withdrawSome}},[_vm._v("Withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doWithdrawBtn","disabled":!_vm.doWithdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.doWithdrawProblem)+"\n                ")])],1),_vm._v(" "),_c('b-tab',{staticClass:"mb-4",attrs:{"title":"Full exit"}},[_c('p',[_vm._v("This will close your account and withdraw all money from it.")]),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doExitBtn"}},[_c('b-btn',{attrs:{"variant":"danger","disabled":!!_vm.withdrawProblem},on:{"click":_vm.withdrawAll}},[_vm._v("Close & withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doExitBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.withdrawProblem)+"\n                ")])],1)],1)],1)],1)}
 var staticRenderFns = []
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
