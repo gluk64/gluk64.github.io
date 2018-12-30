@@ -2544,7 +2544,7 @@ elliptic.eddsa = __webpack_require__(384);
 
 
 var bind = __webpack_require__(128);
-var isBuffer = __webpack_require__(398);
+var isBuffer = __webpack_require__(400);
 
 /*global toString:true*/
 
@@ -6837,316 +6837,6 @@ exports.shr64_lo = shr64_lo;
 /* 15 */
 /***/ (function(module, exports) {
 
-/* globals __VUE_SSR_CONTEXT__ */
-
-// IMPORTANT: Do NOT use ES2015 features in this file.
-// This module is a runtime utility for cleaner component module output and will
-// be included in the final webpack user bundle.
-
-module.exports = function normalizeComponent (
-  rawScriptExports,
-  compiledTemplate,
-  functionalTemplate,
-  injectStyles,
-  scopeId,
-  moduleIdentifier /* server only */
-) {
-  var esModule
-  var scriptExports = rawScriptExports = rawScriptExports || {}
-
-  // ES6 modules interop
-  var type = typeof rawScriptExports.default
-  if (type === 'object' || type === 'function') {
-    esModule = rawScriptExports
-    scriptExports = rawScriptExports.default
-  }
-
-  // Vue.extend constructor export interop
-  var options = typeof scriptExports === 'function'
-    ? scriptExports.options
-    : scriptExports
-
-  // render functions
-  if (compiledTemplate) {
-    options.render = compiledTemplate.render
-    options.staticRenderFns = compiledTemplate.staticRenderFns
-    options._compiled = true
-  }
-
-  // functional template
-  if (functionalTemplate) {
-    options.functional = true
-  }
-
-  // scopedId
-  if (scopeId) {
-    options._scopeId = scopeId
-  }
-
-  var hook
-  if (moduleIdentifier) { // server build
-    hook = function (context) {
-      // 2.3 injection
-      context =
-        context || // cached call
-        (this.$vnode && this.$vnode.ssrContext) || // stateful
-        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
-      // 2.2 with runInNewContext: true
-      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-        context = __VUE_SSR_CONTEXT__
-      }
-      // inject component styles
-      if (injectStyles) {
-        injectStyles.call(this, context)
-      }
-      // register component module identifier for async chunk inferrence
-      if (context && context._registeredComponents) {
-        context._registeredComponents.add(moduleIdentifier)
-      }
-    }
-    // used by ssr in case component is cached and beforeCreate
-    // never gets called
-    options._ssrRegister = hook
-  } else if (injectStyles) {
-    hook = injectStyles
-  }
-
-  if (hook) {
-    var functional = options.functional
-    var existing = functional
-      ? options.render
-      : options.beforeCreate
-
-    if (!functional) {
-      // inject component registration as beforeCreate hook
-      options.beforeCreate = existing
-        ? [].concat(existing, hook)
-        : [hook]
-    } else {
-      // for template-only hot-reload because in that case the render fn doesn't
-      // go through the normalizer
-      options._injectStyles = hook
-      // register for functioal component in vue file
-      options.render = function renderWithStyleInjection (h, context) {
-        hook.call(context)
-        return existing(h, context)
-      }
-    }
-  }
-
-  return {
-    esModule: esModule,
-    exports: scriptExports,
-    options: options
-  }
-}
-
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var isObject = __webpack_require__(25);
-module.exports = function (it) {
-  if (!isObject(it)) throw TypeError(it + ' is not an object!');
-  return it;
-};
-
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports) {
-
 /*
 	MIT License http://www.opensource.org/licenses/mit-license.php
 	Author Tobias Koppers @sokra
@@ -7226,7 +6916,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 19 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -7451,6 +7141,316 @@ function applyToTag (styleElement, obj) {
     styleElement.appendChild(document.createTextNode(css))
   }
 }
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports) {
+
+/* globals __VUE_SSR_CONTEXT__ */
+
+// IMPORTANT: Do NOT use ES2015 features in this file.
+// This module is a runtime utility for cleaner component module output and will
+// be included in the final webpack user bundle.
+
+module.exports = function normalizeComponent (
+  rawScriptExports,
+  compiledTemplate,
+  functionalTemplate,
+  injectStyles,
+  scopeId,
+  moduleIdentifier /* server only */
+) {
+  var esModule
+  var scriptExports = rawScriptExports = rawScriptExports || {}
+
+  // ES6 modules interop
+  var type = typeof rawScriptExports.default
+  if (type === 'object' || type === 'function') {
+    esModule = rawScriptExports
+    scriptExports = rawScriptExports.default
+  }
+
+  // Vue.extend constructor export interop
+  var options = typeof scriptExports === 'function'
+    ? scriptExports.options
+    : scriptExports
+
+  // render functions
+  if (compiledTemplate) {
+    options.render = compiledTemplate.render
+    options.staticRenderFns = compiledTemplate.staticRenderFns
+    options._compiled = true
+  }
+
+  // functional template
+  if (functionalTemplate) {
+    options.functional = true
+  }
+
+  // scopedId
+  if (scopeId) {
+    options._scopeId = scopeId
+  }
+
+  var hook
+  if (moduleIdentifier) { // server build
+    hook = function (context) {
+      // 2.3 injection
+      context =
+        context || // cached call
+        (this.$vnode && this.$vnode.ssrContext) || // stateful
+        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext) // functional
+      // 2.2 with runInNewContext: true
+      if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+        context = __VUE_SSR_CONTEXT__
+      }
+      // inject component styles
+      if (injectStyles) {
+        injectStyles.call(this, context)
+      }
+      // register component module identifier for async chunk inferrence
+      if (context && context._registeredComponents) {
+        context._registeredComponents.add(moduleIdentifier)
+      }
+    }
+    // used by ssr in case component is cached and beforeCreate
+    // never gets called
+    options._ssrRegister = hook
+  } else if (injectStyles) {
+    hook = injectStyles
+  }
+
+  if (hook) {
+    var functional = options.functional
+    var existing = functional
+      ? options.render
+      : options.beforeCreate
+
+    if (!functional) {
+      // inject component registration as beforeCreate hook
+      options.beforeCreate = existing
+        ? [].concat(existing, hook)
+        : [hook]
+    } else {
+      // for template-only hot-reload because in that case the render fn doesn't
+      // go through the normalizer
+      options._injectStyles = hook
+      // register for functioal component in vue file
+      options.render = function renderWithStyleInjection (h, context) {
+        hook.call(context)
+        return existing(h, context)
+      }
+    }
+  }
+
+  return {
+    esModule: esModule,
+    exports: scriptExports,
+    options: options
+  }
+}
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var isObject = __webpack_require__(25);
+module.exports = function (it) {
+  if (!isObject(it)) throw TypeError(it + ' is not an object!');
+  return it;
+};
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
 
 
 /***/ }),
@@ -7879,7 +7879,7 @@ module.exports = function (it) {
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var anObject = __webpack_require__(16);
+var anObject = __webpack_require__(18);
 var IE8_DOM_DEFINE = __webpack_require__(142);
 var toPrimitive = __webpack_require__(143);
 var dP = Object.defineProperty;
@@ -12251,14 +12251,15 @@ var store = {
         // ethereum part
         address: null,
         balance: null,
+        onchain: {
+            balance: null
+        },
         plasma: {
             id: null,
-
+            closing: false,
             key: null,
-
             pending_nonce: null,
             pending: {
-                balance: null,
                 nonce: null
             },
             committed: {
@@ -12949,7 +12950,7 @@ module.exports = EthFilter;
   }
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(17), __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19), __webpack_require__(7)))
 
 /***/ }),
 /* 65 */
@@ -12980,7 +12981,7 @@ hash.ripemd160 = hash.ripemd.ripemd160;
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(9);
-var normalizeHeaderName = __webpack_require__(400);
+var normalizeHeaderName = __webpack_require__(402);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -13074,7 +13075,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(17)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19)))
 
 /***/ }),
 /* 67 */
@@ -13271,7 +13272,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
-var anObject = __webpack_require__(16);
+var anObject = __webpack_require__(18);
 var aFunction = __webpack_require__(34);
 var SPECIES = __webpack_require__(11)('species');
 module.exports = function (O, D) {
@@ -13388,7 +13389,7 @@ module.exports = function (exec) {
 /* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var anObject = __webpack_require__(16);
+var anObject = __webpack_require__(18);
 var isObject = __webpack_require__(25);
 var newPromiseCapability = __webpack_require__(51);
 
@@ -17255,13 +17256,13 @@ function g1_512_lo(xh, xl) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_bn_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_bn_js__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_ethjs__ = __webpack_require__(113);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_ethjs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_ethjs__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_axios__ = __webpack_require__(396);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_axios__ = __webpack_require__(398);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_axios__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_ethjs_util__ = __webpack_require__(120);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_ethjs_util___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_ethjs_util__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__contracts_lib_transaction_js__ = __webpack_require__(121);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__contracts_lib_transaction_js___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__contracts_lib_transaction_js__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__contract__ = __webpack_require__(415);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__contract__ = __webpack_require__(417);
 
 
 //
@@ -17518,19 +17519,19 @@ var baseUrl = 'https://api.plasma-winter.io';
             if (Number(this.depositAmount) > Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.balance)) return "deposit amount exceeds mainchain account balance: " + this.depositAmount + " > " + __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.balance;
         },
         withdrawProblem: function withdrawProblem() {
-            if (!(Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.pending.balance) > 0)) return "empty balance in the Plasma account";
+            if (!(Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.committed.balance) > 0)) return "empty balance in the Plasma account";
         },
         doWithdrawProblem: function doWithdrawProblem() {
             if (this.depositProblem) return this.depositProblem;
-            if (Number(this.withdrawAmount) > Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.pending.balance)) return "specified amount exceeds Plasma balance";
+            if (Number(this.withdrawAmount) > Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.committed.balance)) return "specified amount exceeds Plasma balance";
             if (Number(this.nonce) < Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.pending.nonce)) return "nonce must be greater then confirmed in Plasma: got " + this.nonce + ", expected >= " + __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.pending.nonce;
         },
         transferProblem: function transferProblem() {
             if (!__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id) return "no Plasma account exists yet";
-            if (!(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.pending.balance > 0)) return "Plasma account has empty balance";
+            if (!(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.committed.balance > 0)) return "Plasma account has empty balance";
             if (!__WEBPACK_IMPORTED_MODULE_6_ethjs_util___default.a.isHexString(this.transferTo)) return "`To` is not a valid ethereum address: " + this.transferTo;
             if (!(this.transferAmount > 0)) return "positive amount required, e.g. 100.55";
-            if (Number(this.transferAmount) > Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.pending.balance)) return "specified amount exceeds Plasma balance";
+            if (Number(this.transferAmount) > Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.committed.balance)) return "specified amount exceeds Plasma balance";
             if (Number(this.nonce) < Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.pending.nonce)) return "nonce must be greater then confirmed in Plasma: got " + this.nonce + ", expected >= " + __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.pending.nonce;
         }
     },
@@ -17633,75 +17634,94 @@ var baseUrl = 'https://api.plasma-winter.io';
 
             return withdrawAll;
         }(),
+        completeWithdraw: function () {
+            var _ref5 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee5() {
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee5$(_context5) {
+                    while (1) {
+                        switch (_context5.prev = _context5.next) {
+                            case 0:
+                            case 'end':
+                                return _context5.stop();
+                        }
+                    }
+                }, _callee5, this);
+            }));
+
+            function completeWithdraw() {
+                return _ref5.apply(this, arguments);
+            }
+
+            return completeWithdraw;
+        }(),
         alert: function alert(msg, alertType) {
             this.result = msg;
             this.countdown = 30;
             this.alertType = alertType || 'danger';
         },
         transfer: function () {
-            var _ref5 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee5() {
+            var _ref6 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee6() {
                 var to;
-                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee5$(_context5) {
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee6$(_context6) {
                     while (1) {
-                        switch (_context5.prev = _context5.next) {
+                        switch (_context6.prev = _context6.next) {
                             case 0:
-                                _context5.prev = 0;
+                                _context6.prev = 0;
 
                                 this.transferPending = true;
 
                                 if (__WEBPACK_IMPORTED_MODULE_6_ethjs_util___default.a.isHexString(this.transferTo)) {
-                                    _context5.next = 5;
+                                    _context6.next = 5;
                                     break;
                                 }
 
                                 this.alert('to is not a hex string');
-                                return _context5.abrupt('return');
+                                return _context6.abrupt('return');
 
                             case 5:
-                                _context5.next = 7;
+                                _context6.next = 7;
                                 return contract.ethereumAddressToAccountID(this.transferTo);
 
                             case 7:
-                                to = _context5.sent[0].toNumber();
+                                to = _context6.sent[0].toNumber();
 
                                 if (!(0 === to)) {
-                                    _context5.next = 11;
+                                    _context6.next = 11;
                                     break;
                                 }
 
                                 this.alert('recepient not found');
-                                return _context5.abrupt('return');
+                                return _context6.abrupt('return');
 
                             case 11:
-                                _context5.next = 13;
+                                _context6.next = 13;
                                 return this.plasmaTransfer(to, this.transferAmount);
 
                             case 13:
-                                _context5.prev = 13;
+                                _context6.prev = 13;
 
                                 this.transferPending = false;
-                                return _context5.finish(13);
+                                return _context6.finish(13);
 
                             case 16:
                             case 'end':
-                                return _context5.stop();
+                                return _context6.stop();
                         }
                     }
-                }, _callee5, this, [[0,, 13, 16]]);
+                }, _callee6, this, [[0,, 13, 16]]);
             }));
 
             function transfer() {
-                return _ref5.apply(this, arguments);
+                return _ref6.apply(this, arguments);
             }
 
             return transfer;
         }(),
         plasmaTransfer: function () {
-            var _ref6 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee6(to, amount) {
+            var _ref7 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee7(to, amount) {
                 var from, privateKey, nonce, good_until_block, fee, apiForm, result, new_nonce_result, new_nonce;
-                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee6$(_context6) {
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee7$(_context7) {
                     while (1) {
-                        switch (_context6.prev = _context6.next) {
+                        switch (_context7.prev = _context7.next) {
                             case 0:
                                 console.log('initiating transfer to', to, amount);
 
@@ -17720,7 +17740,7 @@ var baseUrl = 'https://api.plasma-winter.io';
                                 console.log(from, to, amount, fee, nonce, good_until_block, privateKey);
 
                                 apiForm = __WEBPACK_IMPORTED_MODULE_7__contracts_lib_transaction_js___default.a.createTransaction(from, to, amount, fee, nonce, good_until_block, privateKey);
-                                _context6.next = 11;
+                                _context7.next = 11;
                                 return __WEBPACK_IMPORTED_MODULE_5_axios___default()({
                                     method: 'post',
                                     url: baseUrl + '/send',
@@ -17728,22 +17748,22 @@ var baseUrl = 'https://api.plasma-winter.io';
                                 });
 
                             case 11:
-                                result = _context6.sent;
+                                result = _context7.sent;
 
                                 if (!result.data.accepted) {
-                                    _context6.next = 20;
+                                    _context7.next = 20;
                                     break;
                                 }
 
                                 this.alert('Transaction with nonce #' + this.nonce + ' accepted', 'success');
-                                _context6.next = 16;
+                                _context7.next = 16;
                                 return __WEBPACK_IMPORTED_MODULE_5_axios___default()({
                                     method: 'get',
                                     url: baseUrl + '/account/' + from
                                 });
 
                             case 16:
-                                new_nonce_result = _context6.sent;
+                                new_nonce_result = _context7.sent;
 
                                 if (!new_nonce_result.error) {
                                     new_nonce = new_nonce_result.data.pending_nonce;
@@ -17752,7 +17772,7 @@ var baseUrl = 'https://api.plasma-winter.io';
                                 } else {
                                     console.log('could not fetch data from server: ', new_nonce_result.error);
                                 }
-                                _context6.next = 21;
+                                _context7.next = 21;
                                 break;
 
                             case 20:
@@ -17760,14 +17780,14 @@ var baseUrl = 'https://api.plasma-winter.io';
 
                             case 21:
                             case 'end':
-                                return _context6.stop();
+                                return _context7.stop();
                         }
                     }
-                }, _callee6, this);
+                }, _callee7, this);
             }));
 
             function plasmaTransfer(_x, _x2) {
-                return _ref6.apply(this, arguments);
+                return _ref7.apply(this, arguments);
             }
 
             return plasmaTransfer;
@@ -17775,31 +17795,30 @@ var baseUrl = 'https://api.plasma-winter.io';
         parseStateResult: function parseStateResult(data) {
             data.verified.balance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](data.verified.balance).mul(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]('1000000000000')), 'ether');
             data.committed.balance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](data.committed.balance).mul(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]('1000000000000')), 'ether');
-            data.pending.balance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](data.pending.balance).mul(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]('1000000000000')), 'ether');
+            // TODO: remove when server updated
             if (Number(data.pending_nonce) > Number(data.pending.nonce)) {
-                // QUESTION: AV, why pendig_nonce at all?
                 data.pending.nonce = data.pending_nonce;
             }
             return data;
         },
         getPlasmaInfo: function () {
-            var _ref7 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee7(accountId) {
+            var _ref8 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee8(accountId) {
                 var result;
-                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee7$(_context7) {
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee8$(_context8) {
                     while (1) {
-                        switch (_context7.prev = _context7.next) {
+                        switch (_context8.prev = _context8.next) {
                             case 0:
-                                _context7.next = 2;
+                                _context8.next = 2;
                                 return __WEBPACK_IMPORTED_MODULE_5_axios___default()({
                                     method: 'get',
                                     url: baseUrl + '/account/' + accountId
                                 });
 
                             case 2:
-                                result = _context7.sent;
+                                result = _context8.sent;
 
                                 if (!(result.status !== 200)) {
-                                    _context7.next = 5;
+                                    _context8.next = 5;
                                     break;
                                 }
 
@@ -17807,96 +17826,110 @@ var baseUrl = 'https://api.plasma-winter.io';
 
                             case 5:
                                 if (!(result.data.error === 'non-existing account')) {
-                                    _context7.next = 7;
+                                    _context8.next = 7;
                                     break;
                                 }
 
-                                return _context7.abrupt('return', { closing: true });
+                                return _context8.abrupt('return', { closing: true });
 
                             case 7:
                                 if (!result.data.error) {
-                                    _context7.next = 9;
+                                    _context8.next = 9;
                                     break;
                                 }
 
                                 throw 'Getting data for account ' + accountId + ' failed: ' + result.data.error;
 
                             case 9:
-                                return _context7.abrupt('return', this.parseStateResult(result.data));
+                                return _context8.abrupt('return', this.parseStateResult(result.data));
 
                             case 10:
                             case 'end':
-                                return _context7.stop();
+                                return _context8.stop();
                         }
                     }
-                }, _callee7, this);
+                }, _callee8, this);
             }));
 
             function getPlasmaInfo(_x3) {
-                return _ref7.apply(this, arguments);
+                return _ref8.apply(this, arguments);
             }
 
             return getPlasmaInfo;
         }(),
         updateAccountInfo: function () {
-            var _ref8 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee8() {
+            var _ref9 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee9() {
                 var _this = this;
 
-                var newData, timer, plasmaData, balance, id;
-                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee8$(_context8) {
+                var newData, timer, plasmaData, onchain, balance, id;
+                return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee9$(_context9) {
                     while (1) {
-                        switch (_context8.prev = _context8.next) {
+                        switch (_context9.prev = _context9.next) {
                             case 0:
                                 newData = {};
                                 timer = this.updateTimer;
                                 plasmaData = {};
-                                _context8.prev = 3;
+                                onchain = {};
+                                _context9.prev = 4;
 
                                 newData.address = ethereum.selectedAddress;
-                                _context8.next = 7;
+                                _context9.next = 8;
                                 return eth.getBalance(newData.address);
 
-                            case 7:
-                                balance = _context8.sent.toString();
+                            case 8:
+                                balance = _context9.sent.toString();
 
                                 newData.balance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(balance, 'ether');
-                                _context8.next = 11;
+                                _context9.next = 12;
                                 return contract.ethereumAddressToAccountID(newData.address);
 
-                            case 11:
-                                id = _context8.sent[0].toNumber();
+                            case 12:
+                                id = _context9.sent[0].toNumber();
 
 
                                 if (id !== __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id) __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id = null; // display loading.gif
 
+                                _context9.next = 16;
+                                return contract.accounts(id);
+
+                            case 16:
+                                onchain.account = _context9.sent;
+
+
+                                // TODO AV: read events and fill values below:
+                                onchain.balance = 5; // available to complete withdraw
+                                onchain.completeWithdrawArgs = {}; // arguments to use in this.completeWithdraw()
+
                                 newData.plasmaId = id;
 
                                 if (!(id > 0)) {
-                                    _context8.next = 18;
+                                    _context9.next = 24;
                                     break;
                                 }
 
-                                _context8.next = 17;
+                                _context9.next = 23;
                                 return this.getPlasmaInfo(id);
 
-                            case 17:
-                                plasmaData = _context8.sent;
+                            case 23:
+                                plasmaData = _context9.sent;
 
-                            case 18:
-                                _context8.next = 23;
+                            case 24:
+                                _context9.next = 29;
                                 break;
 
-                            case 20:
-                                _context8.prev = 20;
-                                _context8.t0 = _context8['catch'](3);
+                            case 26:
+                                _context9.prev = 26;
+                                _context9.t0 = _context9['catch'](4);
 
-                                this.alert('Status update failed: ' + _context8.t0);
+                                this.alert('Status update failed: ' + _context9.t0);
 
-                            case 23:
+                            case 29:
                                 if (timer === this.updateTimer) {
                                     // if this handler is still valid
                                     __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address = newData.address;
                                     __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.balance = newData.balance;
+
+                                    __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.onchain = onchain;
 
                                     __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id = newData.plasmaId;
                                     __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.closing = plasmaData.closing;
@@ -17919,16 +17952,16 @@ var baseUrl = 'https://api.plasma-winter.io';
                                     }, 1000);
                                 }
 
-                            case 24:
+                            case 30:
                             case 'end':
-                                return _context8.stop();
+                                return _context9.stop();
                         }
                     }
-                }, _callee8, this, [[3, 20]]);
+                }, _callee9, this, [[4, 26]]);
             }));
 
             function updateAccountInfo() {
-                return _ref8.apply(this, arguments);
+                return _ref9.apply(this, arguments);
             }
 
             return updateAccountInfo;
@@ -17992,7 +18025,7 @@ var baseUrl = 'https://api.plasma-winter.io';
 
   var Buffer;
   try {
-    Buffer = __webpack_require__(395).Buffer;
+    Buffer = __webpack_require__(397).Buffer;
   } catch (e) {
   }
 
@@ -21396,12 +21429,12 @@ module.exports = function bind(fn, thisArg) {
 
 
 var utils = __webpack_require__(9);
-var settle = __webpack_require__(401);
-var buildURL = __webpack_require__(403);
-var parseHeaders = __webpack_require__(404);
-var isURLSameOrigin = __webpack_require__(405);
+var settle = __webpack_require__(403);
+var buildURL = __webpack_require__(405);
+var parseHeaders = __webpack_require__(406);
+var isURLSameOrigin = __webpack_require__(407);
 var createError = __webpack_require__(130);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(406);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(408);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -21498,7 +21531,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(407);
+      var cookies = __webpack_require__(409);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -21582,7 +21615,7 @@ module.exports = function xhrAdapter(config) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(402);
+var enhanceError = __webpack_require__(404);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -22654,7 +22687,7 @@ module.exports = function (Constructor, NAME, next) {
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-var anObject = __webpack_require__(16);
+var anObject = __webpack_require__(18);
 var dPs = __webpack_require__(147);
 var enumBugKeys = __webpack_require__(73);
 var IE_PROTO = __webpack_require__(48)('IE_PROTO');
@@ -22701,7 +22734,7 @@ module.exports = Object.create || function create(O, Properties) {
 /***/ (function(module, exports, __webpack_require__) {
 
 var dP = __webpack_require__(35);
-var anObject = __webpack_require__(16);
+var anObject = __webpack_require__(18);
 var getKeys = __webpack_require__(46);
 
 module.exports = __webpack_require__(26) ? Object.defineProperties : function defineProperties(O, Properties) {
@@ -23192,7 +23225,7 @@ module.exports = function (it, Constructor, name, forbiddenField) {
 var ctx = __webpack_require__(33);
 var call = __webpack_require__(159);
 var isArrayIter = __webpack_require__(160);
-var anObject = __webpack_require__(16);
+var anObject = __webpack_require__(18);
 var toLength = __webpack_require__(70);
 var getIterFn = __webpack_require__(161);
 var BREAK = {};
@@ -23221,7 +23254,7 @@ exports.RETURN = RETURN;
 /***/ (function(module, exports, __webpack_require__) {
 
 // call something on iterator step with safe closing on error
-var anObject = __webpack_require__(16);
+var anObject = __webpack_require__(18);
 module.exports = function (iterator, fn, value, entries) {
   try {
     return entries ? fn(anObject(value)[0], value[1]) : fn(value);
@@ -34737,7 +34770,7 @@ Vue.compile = compileToFunctions;
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(17)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(19)))
 
 /***/ }),
 /* 172 */
@@ -39951,7 +39984,7 @@ Object(__WEBPACK_IMPORTED_MODULE_1__utils__["n" /* vueUse */])(VuePlugin);
 function injectStyle (ssrContext) {
   __webpack_require__(242)
 }
-var normalizeComponent = __webpack_require__(15)
+var normalizeComponent = __webpack_require__(17)
 /* script */
 
 
@@ -39988,13 +40021,13 @@ var content = __webpack_require__(243);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(19)("382bf6d4", content, true, {});
+var update = __webpack_require__(16)("382bf6d4", content, true, {});
 
 /***/ }),
 /* 243 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(18)(false);
+exports = module.exports = __webpack_require__(15)(false);
 // imports
 
 
@@ -40407,7 +40440,7 @@ Object(__WEBPACK_IMPORTED_MODULE_1__utils__["n" /* vueUse */])(VuePlugin);
 function injectStyle (ssrContext) {
   __webpack_require__(251)
 }
-var normalizeComponent = __webpack_require__(15)
+var normalizeComponent = __webpack_require__(17)
 /* script */
 
 
@@ -40444,13 +40477,13 @@ var content = __webpack_require__(252);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(19)("34299824", content, true, {});
+var update = __webpack_require__(16)("34299824", content, true, {});
 
 /***/ }),
 /* 252 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(18)(false);
+exports = module.exports = __webpack_require__(15)(false);
 // imports
 
 
@@ -41514,7 +41547,7 @@ Object(__WEBPACK_IMPORTED_MODULE_2__utils__["n" /* vueUse */])(VuePlugin);
 function injectStyle (ssrContext) {
   __webpack_require__(269)
 }
-var normalizeComponent = __webpack_require__(15)
+var normalizeComponent = __webpack_require__(17)
 /* script */
 
 
@@ -41551,13 +41584,13 @@ var content = __webpack_require__(270);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(19)("1e75fd1b", content, true, {});
+var update = __webpack_require__(16)("1e75fd1b", content, true, {});
 
 /***/ }),
 /* 270 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(18)(false);
+exports = module.exports = __webpack_require__(15)(false);
 // imports
 
 
@@ -43130,7 +43163,7 @@ Object(__WEBPACK_IMPORTED_MODULE_2__utils__["n" /* vueUse */])(VuePlugin);
 function injectStyle (ssrContext) {
   __webpack_require__(292)
 }
-var normalizeComponent = __webpack_require__(15)
+var normalizeComponent = __webpack_require__(17)
 /* script */
 
 
@@ -43167,13 +43200,13 @@ var content = __webpack_require__(293);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(19)("2f6c61b7", content, true, {});
+var update = __webpack_require__(16)("2f6c61b7", content, true, {});
 
 /***/ }),
 /* 293 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(18)(false);
+exports = module.exports = __webpack_require__(15)(false);
 // imports
 
 
@@ -43306,7 +43339,7 @@ Object(__WEBPACK_IMPORTED_MODULE_1__utils__["n" /* vueUse */])(VuePlugin);
 function injectStyle (ssrContext) {
   __webpack_require__(298)
 }
-var normalizeComponent = __webpack_require__(15)
+var normalizeComponent = __webpack_require__(17)
 /* script */
 
 
@@ -43343,13 +43376,13 @@ var content = __webpack_require__(299);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(19)("44a80bbe", content, true, {});
+var update = __webpack_require__(16)("44a80bbe", content, true, {});
 
 /***/ }),
 /* 299 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(18)(false);
+exports = module.exports = __webpack_require__(15)(false);
 // imports
 
 
@@ -59801,7 +59834,7 @@ module.exports = {
   }
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(17), __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19), __webpack_require__(7)))
 
 /***/ }),
 /* 349 */
@@ -63887,7 +63920,7 @@ module.exports = {
   }
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(17), __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19), __webpack_require__(7)))
 
 /***/ }),
 /* 352 */
@@ -70236,7 +70269,7 @@ if (inBrowser && window.Vue) {
 function injectStyle (ssrContext) {
   __webpack_require__(357)
 }
-var normalizeComponent = __webpack_require__(15)
+var normalizeComponent = __webpack_require__(17)
 /* script */
 
 
@@ -70273,13 +70306,13 @@ var content = __webpack_require__(358);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(19)("464172c6", content, true, {});
+var update = __webpack_require__(16)("464172c6", content, true, {});
 
 /***/ }),
 /* 358 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(18)(false);
+exports = module.exports = __webpack_require__(15)(false);
 // imports
 
 
@@ -70310,7 +70343,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 function injectStyle (ssrContext) {
   __webpack_require__(361)
 }
-var normalizeComponent = __webpack_require__(15)
+var normalizeComponent = __webpack_require__(17)
 /* script */
 
 
@@ -70347,13 +70380,13 @@ var content = __webpack_require__(362);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(19)("bd4171c6", content, true, {});
+var update = __webpack_require__(16)("bd4171c6", content, true, {});
 
 /***/ }),
 /* 362 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(18)(false);
+exports = module.exports = __webpack_require__(15)(false);
 // imports
 
 
@@ -75936,7 +75969,7 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(17)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(19)))
 
 /***/ }),
 /* 389 */
@@ -76640,7 +76673,7 @@ if (typeof Object.create === 'function') {
   }
 })();
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(17), __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19), __webpack_require__(7)))
 
 /***/ }),
 /* 392 */
@@ -76668,8 +76701,11 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__ = __webpack_require__(126);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_36ceadcc_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(416);
-var normalizeComponent = __webpack_require__(15)
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_19e144e3_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(418);
+function injectStyle (ssrContext) {
+  __webpack_require__(395)
+}
+var normalizeComponent = __webpack_require__(17)
 /* script */
 
 
@@ -76678,14 +76714,14 @@ var normalizeComponent = __webpack_require__(15)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
-var __vue_styles__ = null
+var __vue_styles__ = injectStyle
 /* scopeId */
 var __vue_scopeId__ = null
 /* moduleIdentifier (server only) */
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_36ceadcc_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_19e144e3_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -76697,18 +76733,45 @@ var Component = normalizeComponent(
 
 /***/ }),
 /* 395 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-/* (ignored) */
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(396);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(16)("66d44998", content, true, {});
 
 /***/ }),
 /* 396 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(397);
+exports = module.exports = __webpack_require__(15)(false);
+// imports
+
+
+// module
+exports.push([module.i, ".pending{color:green!important}", ""]);
+
+// exports
+
 
 /***/ }),
 /* 397 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 398 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(399);
+
+/***/ }),
+/* 399 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76716,7 +76779,7 @@ module.exports = __webpack_require__(397);
 
 var utils = __webpack_require__(9);
 var bind = __webpack_require__(128);
-var Axios = __webpack_require__(399);
+var Axios = __webpack_require__(401);
 var defaults = __webpack_require__(66);
 
 /**
@@ -76751,14 +76814,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(132);
-axios.CancelToken = __webpack_require__(413);
+axios.CancelToken = __webpack_require__(415);
 axios.isCancel = __webpack_require__(131);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(414);
+axios.spread = __webpack_require__(416);
 
 module.exports = axios;
 
@@ -76767,7 +76830,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 398 */
+/* 400 */
 /***/ (function(module, exports) {
 
 /*!
@@ -76794,7 +76857,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 399 */
+/* 401 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76802,8 +76865,8 @@ function isSlowBuffer (obj) {
 
 var defaults = __webpack_require__(66);
 var utils = __webpack_require__(9);
-var InterceptorManager = __webpack_require__(408);
-var dispatchRequest = __webpack_require__(409);
+var InterceptorManager = __webpack_require__(410);
+var dispatchRequest = __webpack_require__(411);
 
 /**
  * Create a new instance of Axios
@@ -76880,7 +76943,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 400 */
+/* 402 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76899,7 +76962,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 401 */
+/* 403 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76932,7 +76995,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 402 */
+/* 404 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -76960,7 +77023,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 403 */
+/* 405 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77033,7 +77096,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 404 */
+/* 406 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77093,7 +77156,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 405 */
+/* 407 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77168,7 +77231,7 @@ module.exports = (
 
 
 /***/ }),
-/* 406 */
+/* 408 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77211,7 +77274,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 407 */
+/* 409 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77271,7 +77334,7 @@ module.exports = (
 
 
 /***/ }),
-/* 408 */
+/* 410 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77330,18 +77393,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 409 */
+/* 411 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(9);
-var transformData = __webpack_require__(410);
+var transformData = __webpack_require__(412);
 var isCancel = __webpack_require__(131);
 var defaults = __webpack_require__(66);
-var isAbsoluteURL = __webpack_require__(411);
-var combineURLs = __webpack_require__(412);
+var isAbsoluteURL = __webpack_require__(413);
+var combineURLs = __webpack_require__(414);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -77423,7 +77486,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 410 */
+/* 412 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77450,7 +77513,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 411 */
+/* 413 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77471,7 +77534,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 412 */
+/* 414 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77492,7 +77555,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 413 */
+/* 415 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77556,7 +77619,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 414 */
+/* 416 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -77590,7 +77653,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 415 */
+/* 417 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -77599,11 +77662,11 @@ var ABI = [{ "constant": true, "inputs": [], "name": "lastVerifiedRoot", "output
 /* harmony default export */ __webpack_exports__["a"] = (ABI);
 
 /***/ }),
-/* 416 */
+/* 418 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('b-navbar',{attrs:{"toggleable":"md","type":"dark","variant":"info"}},[_c('b-container',[_c('b-navbar-toggle',{attrs:{"target":"nav_collapse"}}),_vm._v(" "),_c('b-navbar-brand',[_vm._v("Plasma Wallet")]),_vm._v(" "),_c('b-collapse',{attrs:{"is-nav":"","id":"nav_collapse"}},[_c('b-navbar-nav',[_c('b-nav-item',{attrs:{"href":"#","active":""}},[_vm._v("Account")]),_vm._v(" "),_c('b-nav-item',{attrs:{"href":"#","disabled":""}},[_vm._v("Transactions")])],1),_vm._v(" "),_c('b-navbar-nav',{staticClass:"ml-auto"},[_c('b-nav-item',{attrs:{"right":""}},[_vm._v(_vm._s(_vm.store.account.address))])],1)],1)],1)],1),_vm._v(" "),_c('br'),_vm._v(" "),_c('b-container',{staticClass:"bv-example-row"},[_c('b-alert',{staticClass:"mt-2",attrs:{"show":"","dismissible":"","variant":_vm.alertType,"fade":"","show":_vm.countdown},on:{"dismissed":function($event){_vm.countdown=0}}},[_vm._v("\n            "+_vm._s(_vm.result)+"\n        ")]),_vm._v(" "),_c('b-row',[_c('b-col',{staticClass:"col-xl-8 col-lg-7 col-md-6 col-sm-12",attrs:{"sm":"6","order":"2"}},[_c('b-card',{staticClass:"mb-4 d-flex",attrs:{"title":"Transfer in Plasma"}},[_c('label',{attrs:{"for":"transferToInput"}},[_vm._v("To:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferToInput","type":"text","placeholder":"0xb4aaffeaacb27098d9545a3c0e36924af9eedfe0"},model:{value:(_vm.transferTo),callback:function ($$v) {_vm.transferTo=$$v},expression:"transferTo"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                            (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.transferAmount=_vm.store.account.plasma.pending.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.pending.balance || 0))]),_vm._v("):\n                    "),_c('b-form-input',{attrs:{"id":"transferAmountInput","placeholder":"7.50","type":"number"},model:{value:(_vm.transferAmount),callback:function ($$v) {_vm.transferAmount=$$v},expression:"transferAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"float-right",attrs:{"id":"transferBtn"}},[(_vm.transferPending)?_c('img',{staticStyle:{"margin-right":"1.5em"},attrs:{"src":__webpack_require__(133),"width":"100em"}}):_c('b-btn',{staticClass:"mt-4",attrs:{"variant":"outline-primary","disabled":!!_vm.transferProblem},on:{"click":_vm.transfer}},[_vm._v("Submit transaction")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"transferBtn","disabled":_vm.transferPending || !_vm.transferProblem,"triggers":"hover"}},[_vm._v("\n                        Transfer not possible: "+_vm._s(_vm.transferProblem)+"\n                    ")])],1)],1),_vm._v(" "),_c('b-col',{staticClass:"col-xl-4 col-lg-5 col-md-6 col-sm-12 mb-5",attrs:{"sm":"6","order":"1"}},[_c('b-card',{attrs:{"title":"Account info"}},[_c('b-card',{staticClass:"mb-3"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Mainchain")])]),_vm._v(" "),_c('label',{attrs:{"for":"addr"}},[_vm._v("Address")]),_vm._v(" \n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.store.account.address,"target":"blanc"}},[_vm._v("block explorer")]),_vm._v("):\n                        "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"addr","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.address),callback:function ($$v) {_vm.$set(_vm.store.account, "address", $$v)},expression:"store.account.address"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"4"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.balance))])],1)],1),_vm._v(" "),_c('b-row',{staticClass:"mb-0 mt-0"},[_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"depositBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.depositModal",modifiers:{"depositModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.depositProblem}},[_vm._v("⇩ Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"depositBtn","disabled":!_vm.depositProblem,"triggers":"hover"}},[_vm._v("\n                                Deposit not possible: "+_vm._s(_vm.depositProblem)+"\n                            ")])],1),_vm._v(" "),_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"withdrawBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.withdrawModal",modifiers:{"withdrawModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.withdrawProblem}},[_vm._v("Withdraw ⇧")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"withdrawBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                                Withdrawal not possible: "+_vm._s(_vm.withdrawProblem)+"\n                            ")])],1)],1),_vm._v(" "),_c('b-card',{staticClass:"mt-2"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Plasma")]),_vm._v("\n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.store.contractAddress,"target":"blanc"}},[_vm._v("contract")]),_vm._v(")")]),_vm._v(" "),(_vm.store.account.plasma.id === null)?_c('img',{attrs:{"src":__webpack_require__(133),"width":"100em"}}):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.id === 0)?_c('div',[_c('p',[_vm._v("No account yet.")])]):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.closing)?_c('div',[_c('p',[_vm._v("Pending closing account, please complete exit.")])]):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.id > 0 && !_vm.store.account.plasma.closing)?_c('div',[_c('label',{attrs:{"for":"acc_id"}},[_vm._v("Account ID:")]),_vm._v(" "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"acc_id","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.plasma.id),callback:function ($$v) {_vm.$set(_vm.store.account.plasma, "id", $$v)},expression:"store.account.plasma.id"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Verified balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.plasma.verified.balance || 0))]),_vm._v(" "),_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Verified nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.verified.nonce || 0))])],1),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Committed balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.plasma.committed.balance || 0))]),_vm._v(" "),_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Committed nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.committed.nonce || 0))])],1),_vm._v(" "),(_vm.store.account.plasma.pending.balance !== _vm.store.account.plasma.committed.balance)?_c('b-row',{staticClass:"mt-2",staticStyle:{"color":"grey"}},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Pending balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.plasma.pending.balance || 0))]),_vm._v(" "),_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Pending nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.pending.nonce || 0))])],1):_vm._e(),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Mempool nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.pending.nonce || 0))])],1)],1):_vm._e()])],1)],1)],1)],1),_vm._v(" "),_c('b-modal',{ref:"depositModal",attrs:{"id":"depositModal","title":"Deposit","hide-footer":""}},[_c('label',{attrs:{"for":"depositAmountInput"}},[_vm._v("Amount")]),_vm._v(" \n            (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.depositAmount=_vm.store.account.balance}}},[_vm._v(_vm._s(_vm.store.account.balance))]),_vm._v("):\n        "),_c('b-form-input',{attrs:{"id":"depositAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.depositAmount),callback:function ($$v) {_vm.depositAmount=$$v},expression:"depositAmount"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doDepositBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doDepositProblem},on:{"click":_vm.deposit}},[_vm._v("Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doDepositBtn","disabled":!_vm.doDepositProblem,"triggers":"hover"}},[_vm._v("\n            Deposit not possible: "+_vm._s(_vm.doDepositProblem)+"\n        ")])],1),_vm._v(" "),_c('b-modal',{ref:"withdrawModal",attrs:{"id":"withdrawModal","title":"Withdrawal","hide-footer":""}},[_c('b-tabs',{attrs:{"pills":"","card":""}},[_c('b-tab',{attrs:{"title":"Partial withdrawal","active":""}},[_c('label',{staticClass:"mt-4",attrs:{"for":"withdrawAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                    (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.withdrawAmount=_vm.store.account.plasma.verified.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.verified.balance))]),_vm._v("):\n                "),_c('b-form-input',{attrs:{"id":"withdrawAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.withdrawAmount),callback:function ($$v) {_vm.withdrawAmount=$$v},expression:"withdrawAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doWithdrawBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doWithdrawProblem},on:{"click":_vm.withdrawSome}},[_vm._v("Withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doWithdrawBtn","disabled":!_vm.doWithdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.doWithdrawProblem)+"\n                ")])],1),_vm._v(" "),_c('b-tab',{staticClass:"mb-4",attrs:{"title":"Full exit"}},[_c('p',[_vm._v("This will close your account and withdraw all money from it")]),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doExitBtn"}},[_c('b-btn',{attrs:{"variant":"danger","disabled":!!_vm.withdrawProblem},on:{"click":_vm.withdrawAll}},[_vm._v("Close & withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doExitBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.withdrawProblem)+"\n                ")])],1)],1)],1)],1)}
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',[_c('b-navbar',{attrs:{"toggleable":"md","type":"dark","variant":"info"}},[_c('b-container',[_c('b-navbar-toggle',{attrs:{"target":"nav_collapse"}}),_vm._v(" "),_c('b-navbar-brand',[_vm._v("Plasma Wallet")]),_vm._v(" "),_c('b-collapse',{attrs:{"is-nav":"","id":"nav_collapse"}},[_c('b-navbar-nav',[_c('b-nav-item',{attrs:{"href":"#","active":""}},[_vm._v("Account")]),_vm._v(" "),_c('b-nav-item',{attrs:{"href":"#","disabled":""}},[_vm._v("Transactions")])],1),_vm._v(" "),_c('b-navbar-nav',{staticClass:"ml-auto"},[_c('b-nav-item',{attrs:{"right":""}},[_vm._v(_vm._s(_vm.store.account.address))])],1)],1)],1)],1),_vm._v(" "),_c('br'),_vm._v(" "),_c('b-container',{staticClass:"bv-example-row"},[_c('b-alert',{staticClass:"mt-2",attrs:{"show":"","dismissible":"","variant":_vm.alertType,"fade":"","show":_vm.countdown},on:{"dismissed":function($event){_vm.countdown=0}}},[_vm._v("\n            "+_vm._s(_vm.result)+"\n        ")]),_vm._v(" "),_c('b-row',[_c('b-col',{staticClass:"col-xl-8 col-lg-7 col-md-6 col-sm-12",attrs:{"sm":"6","order":"2"}},[_c('b-card',{staticClass:"mb-4 d-flex",attrs:{"title":"Transfer in Plasma"}},[_c('label',{attrs:{"for":"transferToInput"}},[_vm._v("To:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferToInput","type":"text","placeholder":"0xb4aaffeaacb27098d9545a3c0e36924af9eedfe0"},model:{value:(_vm.transferTo),callback:function ($$v) {_vm.transferTo=$$v},expression:"transferTo"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                            (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.transferAmount=_vm.store.account.plasma.committed.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.committed.balance || 0))]),_vm._v("):\n                    "),_c('b-form-input',{attrs:{"id":"transferAmountInput","placeholder":"7.50","type":"number"},model:{value:(_vm.transferAmount),callback:function ($$v) {_vm.transferAmount=$$v},expression:"transferAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"float-right",attrs:{"id":"transferBtn"}},[(_vm.transferPending)?_c('img',{staticStyle:{"margin-right":"1.5em"},attrs:{"src":__webpack_require__(133),"width":"100em"}}):_c('b-btn',{staticClass:"mt-4",attrs:{"variant":"outline-primary","disabled":!!_vm.transferProblem},on:{"click":_vm.transfer}},[_vm._v("Submit transaction")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"transferBtn","disabled":_vm.transferPending || !_vm.transferProblem,"triggers":"hover"}},[_vm._v("\n                        Transfer not possible: "+_vm._s(_vm.transferProblem)+"\n                    ")])],1)],1),_vm._v(" "),_c('b-col',{staticClass:"col-xl-4 col-lg-5 col-md-6 col-sm-12 mb-5",attrs:{"sm":"6","order":"1"}},[_c('b-card',{attrs:{"title":"Account info"}},[_c('b-card',{staticClass:"mb-3"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Mainchain")])]),_vm._v(" "),_c('label',{attrs:{"for":"addr"}},[_vm._v("Address")]),_vm._v(" \n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.store.account.address,"target":"blanc"}},[_vm._v("block explorer")]),_vm._v("):\n                        "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"addr","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.address),callback:function ($$v) {_vm.$set(_vm.store.account, "address", $$v)},expression:"store.account.address"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"6"}},[_vm._v("Balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.balance))])],1),_vm._v(" "),_c('b-row',{staticClass:"mt-2",staticStyle:{"color":"grey"}},[_c('b-col',{attrs:{"cols":"6"}},[_vm._v("Pending:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.onchain.balance))])],1),_vm._v(" "),_c('b-row',{staticClass:"mt-2 mx-auto"},[_c('b-btn',{attrs:{"variant":"primary"},on:{"click":_vm.completeWithdraw}},[_vm._v("Complete withdrawal")])],1)],1),_vm._v(" "),_c('b-row',{staticClass:"mb-0 mt-0"},[_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"depositBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.depositModal",modifiers:{"depositModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.depositProblem}},[_vm._v("⇩ Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"depositBtn","disabled":!_vm.depositProblem,"triggers":"hover"}},[_vm._v("\n                                Deposit not possible: "+_vm._s(_vm.depositProblem)+"\n                            ")])],1),_vm._v(" "),_c('b-col',{staticClass:"mb-2",attrs:{"sm":""}},[_c('div',{attrs:{"id":"withdrawBtn"}},[_c('b-btn',{directives:[{name:"b-modal",rawName:"v-b-modal.withdrawModal",modifiers:{"withdrawModal":true}}],staticClass:"w-100",attrs:{"variant":"outline-primary","disabled":!!_vm.withdrawProblem}},[_vm._v("Withdraw ⇧")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"withdrawBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                                Withdrawal not possible: "+_vm._s(_vm.withdrawProblem)+"\n                            ")])],1)],1),_vm._v(" "),_c('b-card',{staticClass:"mt-2"},[_c('p',{staticClass:"mb-2"},[_c('strong',[_vm._v("Plasma")]),_vm._v("\n                            ("),_c('a',{attrs:{"href":'https://rinkeby.etherscan.io/address/'+_vm.store.contractAddress,"target":"blanc"}},[_vm._v("contract")]),_vm._v(")")]),_vm._v(" "),(_vm.store.account.plasma.id === null)?_c('img',{attrs:{"src":__webpack_require__(133),"width":"100em"}}):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.id === 0)?_c('div',[_c('p',[_vm._v("No account yet.")])]):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.closing)?_c('div',[_c('p',[_vm._v("Closing account: please complete pending withdrawal.")])]):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.id > 0 && !_vm.store.account.plasma.closing)?_c('div',[_c('label',{attrs:{"for":"acc_id"}},[_vm._v("Account ID:")]),_vm._v(" "),_c('b-form-input',{staticClass:"mr-2",attrs:{"id":"acc_id","type":"text","readonly":"","bg-variant":"light"},model:{value:(_vm.store.account.plasma.id),callback:function ($$v) {_vm.$set(_vm.store.account.plasma, "id", $$v)},expression:"store.account.plasma.id"}}),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Verified balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.plasma.verified.balance || 0))])],1),_vm._v(" "),(_vm.store.account.plasma.verified.balance != _vm.store.account.plasma.committed.balance)?_c('b-row',{staticClass:"mt-2",staticStyle:{"color":"grey"}},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Committed balance:")]),_vm._v(" "),_c('b-col',[_vm._v("Ξ"+_vm._s(_vm.store.account.plasma.committed.balance || 0))])],1):_vm._e(),_vm._v(" "),(_vm.store.account.plasma.committed.balance !== _vm.store.account.plasma.committed.balance)?_c('b-row',{staticClass:"mt-2",staticStyle:{"color":"grey"}},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Next nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.pending.nonce || 0))])],1):_vm._e(),_vm._v(" "),_c('b-row',{staticClass:"mt-2"},[_c('b-col',{attrs:{"cols":"8"}},[_vm._v("Mempool nonce:")]),_vm._v(" "),_c('b-col',[_vm._v(_vm._s(_vm.store.account.plasma.pending.nonce || 0))])],1)],1):_vm._e()])],1)],1)],1)],1),_vm._v(" "),_c('b-modal',{ref:"depositModal",attrs:{"id":"depositModal","title":"Deposit","hide-footer":""}},[_c('label',{attrs:{"for":"depositAmountInput"}},[_vm._v("Amount")]),_vm._v(" \n            (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.depositAmount=_vm.store.account.balance}}},[_vm._v(_vm._s(_vm.store.account.balance))]),_vm._v("):\n        "),_c('b-form-input',{attrs:{"id":"depositAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.depositAmount),callback:function ($$v) {_vm.depositAmount=$$v},expression:"depositAmount"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doDepositBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doDepositProblem},on:{"click":_vm.deposit}},[_vm._v("Deposit")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doDepositBtn","disabled":!_vm.doDepositProblem,"triggers":"hover"}},[_vm._v("\n            Deposit not possible: "+_vm._s(_vm.doDepositProblem)+"\n        ")])],1),_vm._v(" "),_c('b-modal',{ref:"withdrawModal",attrs:{"id":"withdrawModal","title":"Withdrawal","hide-footer":""}},[_c('b-tabs',{attrs:{"pills":"","card":""}},[_c('b-tab',{attrs:{"title":"Partial withdrawal","active":""}},[_c('label',{staticClass:"mt-4",attrs:{"for":"withdrawAmountInput"}},[_vm._v("Amount")]),_vm._v("\n                    (max Ξ"),_c('a',{attrs:{"href":"#"},on:{"click":function($event){_vm.withdrawAmount=_vm.store.account.plasma.verified.balance}}},[_vm._v(_vm._s(_vm.store.account.plasma.verified.balance))]),_vm._v("):\n                "),_c('b-form-input',{attrs:{"id":"withdrawAmountInput","type":"number","placeholder":"7.50"},model:{value:(_vm.withdrawAmount),callback:function ($$v) {_vm.withdrawAmount=$$v},expression:"withdrawAmount"}}),_vm._v(" "),_c('label',{staticClass:"mt-4",attrs:{"for":"transferNonceInput"}},[_vm._v("Nonce:")]),_vm._v(" "),_c('b-form-input',{attrs:{"id":"transferNonceInput","placeholder":"0","type":"number"},model:{value:(_vm.nonce),callback:function ($$v) {_vm.nonce=$$v},expression:"nonce"}}),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doWithdrawBtn"}},[_c('b-btn',{attrs:{"variant":"primary","disabled":!!_vm.doWithdrawProblem},on:{"click":_vm.withdrawSome}},[_vm._v("Withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doWithdrawBtn","disabled":!_vm.doWithdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.doWithdrawProblem)+"\n                ")])],1),_vm._v(" "),_c('b-tab',{staticClass:"mb-4",attrs:{"title":"Full exit"}},[_c('p',[_vm._v("This will close your account and withdraw all money from it.")]),_vm._v(" "),_c('div',{staticClass:"mt-4 float-right",attrs:{"id":"doExitBtn"}},[_c('b-btn',{attrs:{"variant":"danger","disabled":!!_vm.withdrawProblem},on:{"click":_vm.withdrawAll}},[_vm._v("Close & withdraw")])],1),_vm._v(" "),_c('b-tooltip',{attrs:{"target":"doExitBtn","disabled":!_vm.withdrawProblem,"triggers":"hover"}},[_vm._v("\n                    Withdraw not possible: "+_vm._s(_vm.withdrawProblem)+"\n                ")])],1)],1)],1)],1)}
 var staticRenderFns = []
 var esExports = { render: render, staticRenderFns: staticRenderFns }
 /* harmony default export */ __webpack_exports__["a"] = (esExports);
