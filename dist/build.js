@@ -12254,7 +12254,7 @@ var store = {
         onchain: {
             //isClosing: false,
             balance: null,
-            completeWithdrawArgs: []
+            completeWithdrawArgs: null
         },
         plasma: {
             id: null,
@@ -17457,6 +17457,7 @@ function g1_512_lo(xh, xl) {
 
 
 var baseUrl = 'https://api.plasma-winter.io';
+var maxExitEntries = 32;
 
 /* harmony default export */ __webpack_exports__["a"] = ({
     name: 'wallet',
@@ -17508,10 +17509,12 @@ var baseUrl = 'https://api.plasma-winter.io';
 
                             window.contract = contract;
 
+                            window.ethersContract = new __WEBPACK_IMPORTED_MODULE_5_ethers__["ethers"].Contract(window.contractAddress, __WEBPACK_IMPORTED_MODULE_9__contract__["a" /* default */], window.ethersProvider);
+
                             this.updateAccountInfo();
                             window.t = this;
 
-                        case 12:
+                        case 13:
                         case 'end':
                             return _context.stop();
                     }
@@ -17549,7 +17552,7 @@ var baseUrl = 'https://api.plasma-winter.io';
         doWithdrawProblem: function doWithdrawProblem() {
             if (this.depositProblem) return this.depositProblem;
             if (Number(this.withdrawAmount) > Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.committed.balance)) return "specified amount exceeds Plasma balance";
-            if (Number(this.nonce) < Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.pending.nonce)) return "nonce must be greater then confirmed in Plasma: got " + this.nonce + ", expected >= " + __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.pending.nonce;
+            if (Number(this.nonce) < Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.committed.nonce)) return "nonce must be greater then confirmed in Plasma: got " + this.nonce + ", expected >= " + __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.committed.nonce;
         },
         transferProblem: function transferProblem() {
             if (!__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.id) return "no Plasma account exists yet";
@@ -17557,7 +17560,7 @@ var baseUrl = 'https://api.plasma-winter.io';
             if (!__WEBPACK_IMPORTED_MODULE_7_ethjs_util___default.a.isHexString(this.transferTo)) return "`To` is not a valid ethereum address: " + this.transferTo;
             if (!(this.transferAmount > 0)) return "positive amount required, e.g. 100.55";
             if (Number(this.transferAmount) > Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.committed.balance)) return "specified amount exceeds Plasma balance";
-            if (Number(this.nonce) < Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.committed.nonce)) return "nonce must be greater then confirmed in Plasma: got " + this.nonce + ", expected >= " + __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.pending.nonce;
+            if (Number(this.nonce) < Number(__WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.committed.nonce)) return "nonce must be greater then confirmed in Plasma: got " + this.nonce + ", expected >= " + __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.plasma.committed.nonce;
         },
 
         pendingWithdraw: function pendingWithdraw() {
@@ -17665,7 +17668,7 @@ var baseUrl = 'https://api.plasma-winter.io';
         }(),
         completeWithdraw: function () {
             var _ref5 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee5() {
-                var from, allBlockNumbers;
+                var from, maxIterations;
                 return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee5$(_context5) {
                     while (1) {
                         switch (_context5.prev = _context5.next) {
@@ -17674,35 +17677,27 @@ var baseUrl = 'https://api.plasma-winter.io';
 
                                 // for now - one by one
                                 from = __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address;
-                                allBlockNumbers = __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.onchain.completeWithdrawArgs;
+                                maxIterations = __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.onchain.completeWithdrawArgs;
+                                _context5.next = 5;
+                                return contract.withdrawUserBalance(maxIterations, { from: from });
 
-                                if (!(allBlockNumbers.length > 0)) {
-                                    _context5.next = 6;
-                                    break;
-                                }
-
-                                _context5.next = 6;
-                                return contract.withdrawUserBalance(allBlockNumbers[0], { from: from });
-
-                            case 6:
-                                // in a future just do
-                                // await contract.withdrawUserBalance(allBlockNumbers, {from})
+                            case 5:
                                 this.updateAccountInfo();
-                                _context5.next = 12;
+                                _context5.next = 11;
                                 break;
 
-                            case 9:
-                                _context5.prev = 9;
+                            case 8:
+                                _context5.prev = 8;
                                 _context5.t0 = _context5['catch'](0);
 
                                 this.alert('Exit request failed: ' + _context5.t0);
 
-                            case 12:
+                            case 11:
                             case 'end':
                                 return _context5.stop();
                         }
                     }
-                }, _callee5, this, [[0, 9]]);
+                }, _callee5, this, [[0, 8]]);
             }));
 
             function completeWithdraw() {
@@ -17923,89 +17918,136 @@ var baseUrl = 'https://api.plasma-winter.io';
         }(),
         loadEvents: function () {
             var _ref9 = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_asyncToGenerator___default()( /*#__PURE__*/__WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.mark(function _callee9(address, closing) {
-                var contractForLogs, partialsFilter, fullFilter, events, completeExitsFilter, completeExitEvents, i, multiplier, finalBalance, nonEmptyBlocks, _i, ev, blockNumber, amount, convertedBlockNumber, pendingBalance;
-
+                var multiplier, finalBalance, id, accountInfo, head, entries, i, entry, pendingBalance;
                 return __WEBPACK_IMPORTED_MODULE_0_babel_runtime_regenerator___default.a.wrap(function _callee9$(_context9) {
                     while (1) {
                         switch (_context9.prev = _context9.next) {
                             case 0:
-                                contractForLogs = new __WEBPACK_IMPORTED_MODULE_5_ethers__["ethers"].Contract(window.contractAddress, __WEBPACK_IMPORTED_MODULE_9__contract__["a" /* default */], window.ethersProvider);
-                                partialsFilter = contractForLogs.filters.LogExit(address, null);
-                                fullFilter = {
-                                    fromBlock: 1,
-                                    toBlock: 'latest',
-                                    address: partialsFilter.address,
-                                    topics: partialsFilter.topics
-                                };
-                                _context9.next = 5;
-                                return ethersProvider.getLogs(fullFilter);
 
-                            case 5:
-                                events = _context9.sent;
+                                // let id = await ethersContract.ethereumAddressToAccountID(address);
+                                // if (id === 0) {
+                                //     return {blocks: [], pendingBalance: Eth.fromWei(new BN(0), 'ether')}
+                                // }
+                                // let accountInfo = await ethersContract.accounts(id);
 
-                                if (!closing) {
-                                    _context9.next = 13;
-                                    break;
-                                }
+                                // if (accountInfo.exitListHead.toNumber() === 0) {
+                                //     return {blocks: [], pendingBalance: Eth.fromWei(new BN(0), 'ether')}
+                                // }
 
-                                completeExitsFilter = contractForLogs.filters.LogCompleteExit(address, null);
+                                // return {blocks: nonEmptyBlocks, pendingBalance}
 
+                                // let partialsFilter = contractForLogs.filters.LogExit(address, null)
 
-                                fullFilter = {
-                                    fromBlock: 1,
-                                    toBlock: 'latest',
-                                    address: completeExitsFilter.address,
-                                    topics: completeExitsFilter.topics
-                                };
+                                // let fullFilter = {
+                                //     fromBlock: 1,
+                                //     toBlock: 'latest',
+                                //     address: partialsFilter.address,
+                                //     topics: partialsFilter.topics
+                                // }
 
-                                _context9.next = 11;
-                                return ethersProvider.getLogs(fullFilter);
+                                // let events = await ethersProvider.getLogs(fullFilter)
 
-                            case 11:
-                                completeExitEvents = _context9.sent;
+                                // if(closing) {
+                                //     let completeExitsFilter = contractForLogs.filters.LogCompleteExit(address, null)
 
+                                //     fullFilter = {
+                                //         fromBlock: 1,
+                                //         toBlock: 'latest',
+                                //         address: completeExitsFilter.address,
+                                //         topics: completeExitsFilter.topics
+                                //     }
 
-                                for (i = 0; i < completeExitEvents; i++) {
-                                    events.push(completeExitEvents[i]);
-                                }
+                                //     let completeExitEvents = await ethersProvider.getLogs(fullFilter)
 
-                            case 13:
+                                //     for (let i = 0; i < completeExitEvents; i++) {
+                                //         events.push(completeExitEvents[i]);
+                                //     }
+                                // }
+
+                                // const multiplier = new BN('1000000000000')
+                                // let finalBalance = new BN(0)
+                                // const nonEmptyBlocks = [];
+
+                                // for (let i = 0; i < events.length; i++) {
+                                //     let ev = events[i];
+                                //     let blockNumber = ethers.utils.bigNumberify(ev.topics[2]);
+                                //     let amount = (await contract.exitLeafs(address, blockNumber))[0];
+                                //     if (!amount.eq(new BN(0))) {
+                                //         let convertedBlockNumber = new BN(blockNumber.toString(10))
+                                //         nonEmptyBlocks.push(convertedBlockNumber);
+                                //         finalBalance = finalBalance.add(amount)
+                                //     }
+                                // }
+
                                 multiplier = new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"]('1000000000000');
                                 finalBalance = new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](0);
-                                nonEmptyBlocks = [];
-                                _i = 0;
+                                _context9.next = 4;
+                                return contract.ethereumAddressToAccountID(address);
 
-                            case 17:
-                                if (!(_i < events.length)) {
-                                    _context9.next = 27;
+                            case 4:
+                                id = _context9.sent[0].toNumber();
+
+                                if (!(id === 0)) {
+                                    _context9.next = 7;
                                     break;
                                 }
 
-                                ev = events[_i];
-                                blockNumber = __WEBPACK_IMPORTED_MODULE_5_ethers__["ethers"].utils.bigNumberify(ev.topics[2]);
-                                _context9.next = 22;
-                                return contract.exitAmounts(address, blockNumber);
+                                return _context9.abrupt('return', { blocks: 0, pendingBalance: __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](0), 'ether') });
 
-                            case 22:
-                                amount = _context9.sent[0];
+                            case 7:
+                                _context9.next = 9;
+                                return contract.accounts(id);
 
-                                if (!amount.eq(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](0))) {
-                                    convertedBlockNumber = new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](blockNumber.toString(10));
+                            case 9:
+                                accountInfo = _context9.sent;
 
-                                    nonEmptyBlocks.push(convertedBlockNumber);
-                                    finalBalance = finalBalance.add(amount);
+                                if (!(accountInfo.exitListHead.toNumber() === 0)) {
+                                    _context9.next = 12;
+                                    break;
                                 }
 
-                            case 24:
-                                _i++;
-                                _context9.next = 17;
+                                return _context9.abrupt('return', { blocks: 0, pendingBalance: __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(new __WEBPACK_IMPORTED_MODULE_3_bn_js__["BN"](0), 'ether') });
+
+                            case 12:
+                                head = accountInfo.exitListHead;
+                                entries = 0;
+                                i = 0;
+
+                            case 15:
+                                if (!(i < maxExitEntries)) {
+                                    _context9.next = 29;
+                                    break;
+                                }
+
+                                _context9.next = 18;
+                                return contract.exitLeafs(address, head);
+
+                            case 18:
+                                entry = _context9.sent;
+
+                                finalBalance = finalBalance.add(entry.amount);
+                                entries = i + 1;
+
+                                if (!(entry.nextID.toNumber() === 0)) {
+                                    _context9.next = 25;
+                                    break;
+                                }
+
+                                return _context9.abrupt('break', 29);
+
+                            case 25:
+                                head = entry.nextID;
+
+                            case 26:
+                                i++;
+                                _context9.next = 15;
                                 break;
 
-                            case 27:
-                                pendingBalance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(finalBalance.mul(multiplier), 'ether');
-                                return _context9.abrupt('return', { blocks: nonEmptyBlocks, pendingBalance: pendingBalance });
-
                             case 29:
+                                pendingBalance = __WEBPACK_IMPORTED_MODULE_4_ethjs___default.a.fromWei(finalBalance.mul(multiplier), 'ether');
+                                return _context9.abrupt('return', { blocks: entries, pendingBalance: pendingBalance });
+
+                            case 31:
                             case 'end':
                                 return _context9.stop();
                         }
@@ -18074,10 +18116,15 @@ var baseUrl = 'https://api.plasma-winter.io';
 
                             case 23:
                                 accountState = _context10.sent;
-                                _context10.next = 26;
+
+
+                                // let accountState = await ethersContract.accounts(id);
+                                plasmaData.closing = accountState.state.toNumber() > 1;
+
+                                _context10.next = 27;
                                 return this.loadEvents(newData.address, plasmaData.closing);
 
-                            case 26:
+                            case 27:
                                 _ref11 = _context10.sent;
                                 blocks = _ref11.blocks;
                                 pendingBalance = _ref11.pendingBalance;
@@ -18088,27 +18135,27 @@ var baseUrl = 'https://api.plasma-winter.io';
                                 newData.plasmaId = id;
 
                                 if (!(id > 0)) {
-                                    _context10.next = 36;
+                                    _context10.next = 37;
                                     break;
                                 }
 
-                                _context10.next = 35;
+                                _context10.next = 36;
                                 return this.getPlasmaInfo(id);
 
-                            case 35:
+                            case 36:
                                 plasmaData = _context10.sent;
 
-                            case 36:
-                                _context10.next = 41;
+                            case 37:
+                                _context10.next = 42;
                                 break;
 
-                            case 38:
-                                _context10.prev = 38;
+                            case 39:
+                                _context10.prev = 39;
                                 _context10.t1 = _context10['catch'](4);
 
                                 this.alert('Status update failed: ' + _context10.t1);
 
-                            case 41:
+                            case 42:
                                 if (timer === this.updateTimer) {
                                     // if this handler is still valid
                                     __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */].account.address = newData.address;
@@ -18143,12 +18190,12 @@ var baseUrl = 'https://api.plasma-winter.io';
                                     }, 1000);
                                 }
 
-                            case 42:
+                            case 43:
                             case 'end':
                                 return _context10.stop();
                         }
                     }
-                }, _callee10, this, [[4, 38]]);
+                }, _callee10, this, [[4, 39]]);
             }));
 
             function updateAccountInfo() {
@@ -76897,7 +76944,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__ = __webpack_require__(127);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_436b76e8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(419);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_5ecc9e42_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(419);
 function injectStyle (ssrContext) {
   __webpack_require__(396)
 }
@@ -76917,7 +76964,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_436b76e8_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_5ecc9e42_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -76938,7 +76985,7 @@ var content = __webpack_require__(397);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(16)("7e7c99fd", content, true, {});
+var update = __webpack_require__(16)("6e9b0a20", content, true, {});
 
 /***/ }),
 /* 397 */
@@ -77853,7 +77900,7 @@ module.exports = function spread(callback) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-var ABI = [{ "constant": true, "inputs": [], "name": "lastVerifiedRoot", "outputs": [{ "name": "", "type": "bytes32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "newBatchFee", "type": "uint128" }], "name": "changeExitBatchFee", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "operators", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "startNextDepositBatch", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "SPECIAL_ACCOUNT_EXITS", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalDepositRequests", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "exitor", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "balances", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalExitRequests", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "value", "type": "uint256" }], "name": "scaleIntoPlasmaUnitsFromWei", "outputs": [{ "name": "", "type": "uint128" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "blockNumber", "type": "uint32" }, { "name": "proof", "type": "uint256[8]" }], "name": "verifyExitBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "DEPOSIT_BATCH_SIZE", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "cancelDeposit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "MAX_DELAY", "outputs": [{ "name": "", "type": "uint64" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "float", "type": "uint16" }], "name": "parseFloat", "outputs": [{ "name": "scaledValue", "type": "uint128" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "lastCommittedExitBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }, { "name": "", "type": "uint24" }], "name": "depositRequests", "outputs": [{ "name": "amount", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "accoundIDs", "type": "uint24[1]" }, { "name": "blockNumber", "type": "uint32" }, { "name": "newRoot", "type": "bytes32" }], "name": "commitDepositBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }, { "name": "", "type": "uint32" }], "name": "exitAmounts", "outputs": [{ "name": "", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "currentExitBatchFee", "outputs": [{ "name": "", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint32" }], "name": "blocks", "outputs": [{ "name": "circuit", "type": "uint8" }, { "name": "deadline", "type": "uint64" }, { "name": "totalFees", "type": "uint128" }, { "name": "newRoot", "type": "bytes32" }, { "name": "publicDataCommitment", "type": "bytes32" }, { "name": "prover", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "accountID", "type": "uint24" }, { "name": "maxFee", "type": "uint128" }], "name": "depositInto", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "txDataPacked", "type": "bytes" }], "name": "createPublicDataCommitmentForDeposit", "outputs": [{ "name": "h", "type": "bytes32" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "lastVerifiedDepositBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "TRANSFER_BLOCK_SIZE", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "blockNumber", "type": "uint32" }], "name": "withdrawUserBalance", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "stopped", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "accoundIDs", "type": "uint24[1]" }, { "name": "blockNumber", "type": "uint32" }, { "name": "txDataPacked", "type": "bytes" }, { "name": "newRoot", "type": "bytes32" }], "name": "commitExitBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint24" }], "name": "accounts", "outputs": [{ "name": "state", "type": "uint8" }, { "name": "exitBatchNumber", "type": "uint32" }, { "name": "owner", "type": "address" }, { "name": "publicKey", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastCommittedBlockNumber", "outputs": [{ "name": "", "type": "uint32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "ethereumAddressToAccountID", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "publicKey", "type": "uint256[2]" }, { "name": "maxFee", "type": "uint128" }], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "txDataPacked", "type": "bytes" }], "name": "createPublicDataCommitmentForExit", "outputs": [{ "name": "h", "type": "bytes32" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "transactor", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "DENOMINATOR", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "proof", "type": "uint256[8]" }], "name": "verifyTransferBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "accoundIDs", "type": "uint24[1]" }, { "name": "blockNumber", "type": "uint32" }, { "name": "proof", "type": "uint256[8]" }], "name": "verifyDepositBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "exitBatches", "outputs": [{ "name": "state", "type": "uint8" }, { "name": "blockNumber", "type": "uint32" }, { "name": "timestamp", "type": "uint64" }, { "name": "batchFee", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "DEADLINE", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "currentDepositBatchFee", "outputs": [{ "name": "", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "value", "type": "uint128" }], "name": "scaleFromPlasmaUnitsIntoWei", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [{ "name": "publicKey", "type": "uint256[2]" }], "name": "packAndValidatePublicKey", "outputs": [{ "name": "packed", "type": "uint256" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "SPECIAL_ACCOUNT_DEPOSITS", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "totalFees", "type": "uint128" }, { "name": "txDataPacked", "type": "bytes" }], "name": "createPublicDataCommitmentForTransfer", "outputs": [{ "name": "h", "type": "bytes32" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": false, "inputs": [], "name": "exit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [], "name": "lastVerifiedExitBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "nextAccountToRegister", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "totalFees", "type": "uint128" }, { "name": "txDataPacked", "type": "bytes" }, { "name": "newRoot", "type": "bytes32" }], "name": "commitTransferBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "lastVerifiedBlockNumber", "outputs": [{ "name": "", "type": "uint32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "newBatchFee", "type": "uint128" }], "name": "changeDepositBatchFee", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "depositBatches", "outputs": [{ "name": "state", "type": "uint8" }, { "name": "numRequests", "type": "uint24" }, { "name": "blockNumber", "type": "uint32" }, { "name": "timestamp", "type": "uint64" }, { "name": "batchFee", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastCommittedDepositBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "cancelExit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "startNextExitBatch", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "name": "defaultPublicKeys", "type": "uint256[3]" }], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "payable": true, "stateMutability": "payable", "type": "fallback" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "blockNumber", "type": "uint32" }], "name": "BlockCommitted", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "blockNumber", "type": "uint32" }], "name": "BlockVerified", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }, { "indexed": true, "name": "publicKey", "type": "uint256" }, { "indexed": false, "name": "amount", "type": "uint128" }], "name": "LogDepositRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }], "name": "LogCancelDepositRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }], "name": "LogExitRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }], "name": "LogCancelExitRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "ethereumAddress", "type": "address" }, { "indexed": true, "name": "blockNumber", "type": "uint32" }], "name": "LogExit", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "ethereumAddress", "type": "address" }, { "indexed": true, "name": "blockNumber", "type": "uint32" }, { "indexed": false, "name": "accountID", "type": "uint24" }], "name": "LogCompleteExit", "type": "event" }];
+var ABI = [{ "constant": true, "inputs": [], "name": "lastVerifiedRoot", "outputs": [{ "name": "", "type": "bytes32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "newBatchFee", "type": "uint128" }], "name": "changeExitBatchFee", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "operators", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "startNextDepositBatch", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "SPECIAL_ACCOUNT_EXITS", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalDepositRequests", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "exitor", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "balances", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalExitRequests", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }, { "name": "", "type": "uint32" }], "name": "exitLeafs", "outputs": [{ "name": "nextID", "type": "uint32" }, { "name": "amount", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "value", "type": "uint256" }], "name": "scaleIntoPlasmaUnitsFromWei", "outputs": [{ "name": "", "type": "uint128" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "blockNumber", "type": "uint32" }, { "name": "proof", "type": "uint256[8]" }], "name": "verifyExitBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "DEPOSIT_BATCH_SIZE", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "cancelDeposit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "MAX_DELAY", "outputs": [{ "name": "", "type": "uint64" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "float", "type": "uint16" }], "name": "parseFloat", "outputs": [{ "name": "scaledValue", "type": "uint128" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "lastCommittedExitBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }, { "name": "", "type": "uint24" }], "name": "depositRequests", "outputs": [{ "name": "amount", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "accoundIDs", "type": "uint24[1]" }, { "name": "blockNumber", "type": "uint32" }, { "name": "newRoot", "type": "bytes32" }], "name": "commitDepositBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "currentExitBatchFee", "outputs": [{ "name": "", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint32" }], "name": "blocks", "outputs": [{ "name": "circuit", "type": "uint8" }, { "name": "deadline", "type": "uint64" }, { "name": "totalFees", "type": "uint128" }, { "name": "newRoot", "type": "bytes32" }, { "name": "publicDataCommitment", "type": "bytes32" }, { "name": "prover", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "accountID", "type": "uint24" }, { "name": "maxFee", "type": "uint128" }], "name": "depositInto", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "txDataPacked", "type": "bytes" }], "name": "createPublicDataCommitmentForDeposit", "outputs": [{ "name": "h", "type": "bytes32" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "lastVerifiedDepositBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "TRANSFER_BLOCK_SIZE", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "stopped", "outputs": [{ "name": "", "type": "bool" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "accoundIDs", "type": "uint24[1]" }, { "name": "blockNumber", "type": "uint32" }, { "name": "txDataPacked", "type": "bytes" }, { "name": "newRoot", "type": "bytes32" }], "name": "commitExitBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint24" }], "name": "accounts", "outputs": [{ "name": "state", "type": "uint8" }, { "name": "exitBatchNumber", "type": "uint32" }, { "name": "owner", "type": "address" }, { "name": "publicKey", "type": "uint256" }, { "name": "exitListHead", "type": "uint32" }, { "name": "exitListTail", "type": "uint32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastCommittedBlockNumber", "outputs": [{ "name": "", "type": "uint32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "address" }], "name": "ethereumAddressToAccountID", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "publicKey", "type": "uint256[2]" }, { "name": "maxFee", "type": "uint128" }], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "txDataPacked", "type": "bytes" }], "name": "createPublicDataCommitmentForExit", "outputs": [{ "name": "h", "type": "bytes32" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "transactor", "outputs": [{ "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "DENOMINATOR", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "proof", "type": "uint256[8]" }], "name": "verifyTransferBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "batchNumber", "type": "uint256" }, { "name": "accoundIDs", "type": "uint24[1]" }, { "name": "blockNumber", "type": "uint32" }, { "name": "proof", "type": "uint256[8]" }], "name": "verifyDepositBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "exitBatches", "outputs": [{ "name": "state", "type": "uint8" }, { "name": "blockNumber", "type": "uint32" }, { "name": "timestamp", "type": "uint64" }, { "name": "batchFee", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "DEADLINE", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "currentDepositBatchFee", "outputs": [{ "name": "", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "value", "type": "uint128" }], "name": "scaleFromPlasmaUnitsIntoWei", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": false, "inputs": [{ "name": "iterationsLimit", "type": "uint256" }], "name": "withdrawUserBalance", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "publicKey", "type": "uint256[2]" }], "name": "packAndValidatePublicKey", "outputs": [{ "name": "packed", "type": "uint256" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": true, "inputs": [], "name": "SPECIAL_ACCOUNT_DEPOSITS", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "totalFees", "type": "uint128" }, { "name": "txDataPacked", "type": "bytes" }], "name": "createPublicDataCommitmentForTransfer", "outputs": [{ "name": "h", "type": "bytes32" }], "payable": false, "stateMutability": "pure", "type": "function" }, { "constant": false, "inputs": [], "name": "exit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": true, "inputs": [], "name": "lastVerifiedExitBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "nextAccountToRegister", "outputs": [{ "name": "", "type": "uint24" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "blockNumber", "type": "uint32" }, { "name": "totalFees", "type": "uint128" }, { "name": "txDataPacked", "type": "bytes" }, { "name": "newRoot", "type": "bytes32" }], "name": "commitTransferBlock", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "lastVerifiedBlockNumber", "outputs": [{ "name": "", "type": "uint32" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "name": "newBatchFee", "type": "uint128" }], "name": "changeDepositBatchFee", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "name": "", "type": "uint256" }], "name": "depositBatches", "outputs": [{ "name": "state", "type": "uint8" }, { "name": "numRequests", "type": "uint24" }, { "name": "blockNumber", "type": "uint32" }, { "name": "timestamp", "type": "uint64" }, { "name": "batchFee", "type": "uint128" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "lastCommittedDepositBatch", "outputs": [{ "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "cancelExit", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "startNextExitBatch", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "name": "defaultPublicKeys", "type": "uint256[3]" }], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "payable": true, "stateMutability": "payable", "type": "fallback" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "blockNumber", "type": "uint32" }], "name": "BlockCommitted", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "blockNumber", "type": "uint32" }], "name": "BlockVerified", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }, { "indexed": true, "name": "publicKey", "type": "uint256" }, { "indexed": false, "name": "amount", "type": "uint128" }], "name": "LogDepositRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }], "name": "LogCancelDepositRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }], "name": "LogExitRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "batchNumber", "type": "uint256" }, { "indexed": true, "name": "accountID", "type": "uint24" }], "name": "LogCancelExitRequest", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "ethereumAddress", "type": "address" }, { "indexed": true, "name": "blockNumber", "type": "uint32" }], "name": "LogExit", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "name": "ethereumAddress", "type": "address" }, { "indexed": true, "name": "blockNumber", "type": "uint32" }, { "indexed": false, "name": "accountID", "type": "uint24" }], "name": "LogCompleteExit", "type": "event" }];
 
 /* harmony default export */ __webpack_exports__["a"] = (ABI);
 
