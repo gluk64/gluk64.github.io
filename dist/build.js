@@ -17544,8 +17544,9 @@ var maxExitEntries = 32;
             return this.network === '4' || this.network === '1335';
         },
 
+        //baseUrl: () => web3.version.network === '4' ? 'https://api.plasma-winter.io' : 'http://localhost:80',
         baseUrl: function baseUrl() {
-            return web3.version.network === '4' ? 'https://api.plasma-winter.io' : 'http://localhost:80';
+            return 'https://api.plasma-winter.io';
         },
         store: function store() {
             return __WEBPACK_IMPORTED_MODULE_2__store__["a" /* default */];
@@ -76964,7 +76965,7 @@ var esExports = { render: render, staticRenderFns: staticRenderFns }
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__ = __webpack_require__(127);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_e8c9ee52_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(419);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_184f3078_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__ = __webpack_require__(419);
 function injectStyle (ssrContext) {
   __webpack_require__(396)
 }
@@ -76984,7 +76985,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_Wallet_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_e8c9ee52_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_184f3078_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_Wallet_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -77005,7 +77006,7 @@ var content = __webpack_require__(397);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(16)("421a37f4", content, true, {});
+var update = __webpack_require__(16)("ca4a6c3a", content, true, {});
 
 /***/ }),
 /* 397 */
